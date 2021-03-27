@@ -38,3 +38,5 @@
 ..\obj\run.o: ..\BSP\inc\bsp_interrupt.h
 ..\obj\run.o: ..\BSP\inc\bsp.h
 ..\obj\run.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\run.o: ..\HARDWARE\MAX30102\max30102.h
+..\obj\run.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

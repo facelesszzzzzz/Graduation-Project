@@ -1,10 +1,12 @@
 #include "run.h"
 #include "bsp.h"
 #include <stdio.h>
+#include "max30102.h"
 
 
 void System_Init()
 {
+	MAX30102_Init();
 //	delay_init();	    	 							//延时函数初始化	  
 //	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
 //	//uart_init(115200);	 							//串口初始化为115200
@@ -32,6 +34,7 @@ void Task_50MsHandle()
 {
 	if(Ev50Ms) return;
 	Ev50Ms = SysTick_50MS;
+
 }
 
 void Task_100MsHandle()
@@ -50,6 +53,7 @@ void Task_1SHandle()
 {
 	if(Ev1S) return;
 	Ev1S = SysTick_1S;
+		MAX30102_Handle();
 }
 
 void System_Running()
