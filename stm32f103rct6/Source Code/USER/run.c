@@ -53,7 +53,7 @@ void Task_1SHandle()
 {
 	if(Ev1S) return;
 	Ev1S = SysTick_1S;
-		MAX30102_Handle();
+	MAX30102_Handle();
 }
 
 void System_Running()

@@ -263,6 +263,8 @@ bool maxim_max30102_reset()
 * \retval       true on success
 */
 {
+	/* 给一个停止信号, 复位I2C总线上的所有设备到待机模式 */
+	i2c_Stop();
     if(!maxim_max30102_write_reg(REG_MODE_CONFIG, 0x40))
         return false;
     else
@@ -306,7 +308,7 @@ void MAX30102_Init(void)
     un_max = 0;
     n_ir_buffer_length = 150; //buffer length of 150 stores 3 seconds of samples running at 50sps
 
-	bsp_InitI2C();
+//	bsp_InitI2C();
     maxim_max30102_reset(); //resets the MAX30102
 
     //pinMode(2, INPUT);  //pin D2 connects to the interrupt output pin of the MAX30102
