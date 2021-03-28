@@ -17,12 +17,14 @@ static void BSP_IO_Init(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE, ENABLE);
 //	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF, ENABLE);
 //	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOG, ENABLE);
-	GPIO_PinInit(GPIO_PB5, GPIO_Mode_Out_PP);
-	
-	GPIO_PinInit(GPIO_PC1, GPIO_Mode_Out_OD);
-	GPIO_PinInit(GPIO_PC4, GPIO_Mode_Out_OD);
 
-	GPIO_PinInit(GPIO_PE5, GPIO_Mode_Out_PP);
+	GPIO_PinInit(GPIO_PB12, GPIO_Mode_Out_PP);		/* OLED SDA */
+	GPIO_PinInit(GPIO_PB13, GPIO_Mode_Out_PP);		/* OLED SCK */
+	
+	GPIO_PinInit(GPIO_PC1, GPIO_Mode_Out_OD);		/* MAX30102 SCL */
+	GPIO_PinInit(GPIO_PC4, GPIO_Mode_Out_OD);		/* MAX30102 SDA */
+
+//	GPIO_PinInit(GPIO_PE5, GPIO_Mode_Out_PP);
 }
 
 void BSP_Init(void)

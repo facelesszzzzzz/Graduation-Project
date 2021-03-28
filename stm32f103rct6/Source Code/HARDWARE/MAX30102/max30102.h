@@ -62,7 +62,7 @@
 #ifndef MAX30102_H_
 #define MAX30102_H_
 
-#include "stm32f10x.h"
+#include "sys.h"
 #include "stdbool.h"
 
 

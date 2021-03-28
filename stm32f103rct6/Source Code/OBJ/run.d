@@ -40,3 +40,5 @@
 ..\obj\run.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\run.o: ..\HARDWARE\MAX30102\max30102.h
 ..\obj\run.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\run.o: ..\HARDWARE\OLED\oled.h
+..\obj\run.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

@@ -2,6 +2,7 @@
 #include "bsp.h"
 #include <stdio.h>
 #include "max30102.h"
+#include "oled.h"
 
 
 void System_Init()
@@ -10,7 +11,7 @@ void System_Init()
 //	delay_init();	    	 							//延时函数初始化	  
 //	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
 //	//uart_init(115200);	 							//串口初始化为115200
-//	OLED_Init();										//显示屏初始化
+	OLED_Init();										//显示屏初始化
 //	RELAY_Init();										//继电器初始化
 //	BEEP_Init();										//蜂鸣器初始化
 //	KEY_Init();											//按键初始化
@@ -20,7 +21,7 @@ void System_Init()
 //	RC522_Init();										//RFID初始化
 //	MQ2_Init();											//烟雾传感器初始化
 //	WIFI_Connect();										//wifi连接
-//	OLED_MAIN();										//OLED显示
+	OLED_MAIN();										//OLED显示
 //	TIM3_Int_Init(499,7199);							//72Mhz/(7199+1)=10Khz的.计数频率，0.1ms,  计数到(499+1)为50ms  
 }
 
@@ -28,6 +29,7 @@ void Task_25MsHandle()
 {
 	if(Ev25Ms) return;
 	Ev25Ms = SysTick_25MS;
+	OLED_SHOWDATA();
 }
 
 void Task_50MsHandle()

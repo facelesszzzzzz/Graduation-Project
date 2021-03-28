@@ -13,6 +13,7 @@
 #include "algorithm.h"
 #include "myiic.h"
 #include <stdio.h>
+#include "datatype.h"
 
 #define max30102_WR_address 0xAE
 bool maxim_max30102_write_reg(uint8_t uch_addr, uint8_t uch_data)
@@ -297,12 +298,10 @@ int32_t hrTimeout = 0;
 
 uint32_t un_min, un_max, un_prev_data, un_brightness;  //variables to calculate the on-board LED brightness that reflects the heartbeats
 float f_temp;
-
-uint8_t gMax30102;
+extern Oled_Data_Show_t *pData_Show;
 void MAX30102_Init(void)
 {
     int32_t i;
-//	uint16_t sDelay = 65535;
     un_brightness = 0;
     un_min = 0x3FFFF;
     un_max = 0;
@@ -311,16 +310,11 @@ void MAX30102_Init(void)
 //	bsp_InitI2C();
     maxim_max30102_reset(); //resets the MAX30102
 
-    //pinMode(2, INPUT);  //pin D2 connects to the interrupt output pin of the MAX30102
-
     maxim_max30102_read_reg(REG_INTR_STATUS_1, &uch_dummy); //Reads/clears the interrupt status register
     maxim_max30102_init();  //initialize the MAX30102
-//    while(sDelay--);
 	//read the first 150 samples, and determine the signal range
     for(i = 0; i < n_ir_buffer_length; i++)
     {
-//			while(!gMax30102);
-//        while(KEY0 == 1); //wait until the interrupt pin asserts
         maxim_max30102_read_fifo((aun_red_buffer + i), (aun_ir_buffer + i)); //read from MAX30102 FIFO
 
         if(un_min > aun_red_buffer[i])
@@ -337,270 +331,255 @@ void MAX30102_Init(void)
 void MAX30102_Handle(void)
 {
 	int32_t i;
-    //Continuously taking samples from MAX30102.  Heart rate and SpO2 are calculated every 1 second
-//    while(1)
-//    {
-        i = 0;
-        un_min = 0x3FFFF;
-        un_max = 0;
+	//Continuously taking samples from MAX30102.  Heart rate and SpO2 are calculated every 1 second
+    i = 0;
+    un_min = 0x3FFFF;
+    un_max = 0;
+    //dumping the first 50 sets of samples in the memory and shift the last 100 sets of samples to the top
+    for(i = 50; i < 150; i++)
+    {
+        aun_red_buffer[i - 50] = aun_red_buffer[i];
+        aun_ir_buffer[i - 50] = aun_ir_buffer[i];
 
-        //dumping the first 50 sets of samples in the memory and shift the last 100 sets of samples to the top
-        for(i = 50; i < 150; i++)
+        //update the signal min and max
+        if(un_min > aun_red_buffer[i])
+            un_min = aun_red_buffer[i];
+        if(un_max < aun_red_buffer[i])
+            un_max = aun_red_buffer[i];
+    }
+
+    //take 50 sets of samples before calculating the heart rate.
+    for(i = 100; i < 150; i++)
+    {
+        un_prev_data = aun_red_buffer[i - 1];
+        maxim_max30102_read_fifo((aun_red_buffer + i), (aun_ir_buffer + i));
+
+        //calculate the brightness of the LED
+        if(aun_red_buffer[i] > un_prev_data)
         {
-            aun_red_buffer[i - 50] = aun_red_buffer[i];
-            aun_ir_buffer[i - 50] = aun_ir_buffer[i];
-
-            //update the signal min and max
-            if(un_min > aun_red_buffer[i])
-                un_min = aun_red_buffer[i];
-            if(un_max < aun_red_buffer[i])
-                un_max = aun_red_buffer[i];
-        }
-
-        //take 50 sets of samples before calculating the heart rate.
-        for(i = 100; i < 150; i++)
-        {
-            un_prev_data = aun_red_buffer[i - 1];
-//            while(KEY0 == 1);
-            maxim_max30102_read_fifo((aun_red_buffer + i), (aun_ir_buffer + i));
-
-            //calculate the brightness of the LED
-            if(aun_red_buffer[i] > un_prev_data)
-            {
-                f_temp = aun_red_buffer[i] - un_prev_data;
-                f_temp /= (un_max - un_min);
-                f_temp *= MAX_BRIGHTNESS;
-                f_temp = un_brightness - f_temp;
-                if(f_temp < 0)
-                    un_brightness = 0;
-                else
-                    un_brightness = (int)f_temp;
-            }
+            f_temp = aun_red_buffer[i] - un_prev_data;
+            f_temp /= (un_max - un_min);
+            f_temp *= MAX_BRIGHTNESS;
+            f_temp = un_brightness - f_temp;
+            if(f_temp < 0)
+                un_brightness = 0;
             else
-            {
-                f_temp = un_prev_data - aun_red_buffer[i];
-                f_temp /= (un_max - un_min);
-                f_temp *= MAX_BRIGHTNESS;
-                un_brightness += (int)f_temp;
-                if(un_brightness > MAX_BRIGHTNESS)
-                    un_brightness = MAX_BRIGHTNESS;
-            }
-			//Send_To_PC2( aun_red_buffer[i], aun_ir_buffer[i] );
-            //send samples and calculation result to terminal program through UART
-            /*SerialUSB.print(F("red="));
-            SerialUSB.print(aun_red_buffer[i], DEC);
-            SerialUSB.print(F(", ir="));
-            SerialUSB.print(aun_ir_buffer[i], DEC);
-
-            SerialUSB.print(F(", HR="));
-            SerialUSB.print(n_heart_rate, DEC);
-
-            SerialUSB.print(F(", HRvalid="));
-            SerialUSB.print(ch_hr_valid, DEC);
-
-            SerialUSB.print(F(", SPO2="));
-            SerialUSB.print(n_spo2, DEC);
-
-            SerialUSB.print(F(", SPO2Valid="));
-            SerialUSB.println(ch_spo2_valid, DEC);*/
-
-            //      SerialUSB.println(aun_ir_buffer[i], DEC);
-        }
-		//USART1_Receive_Check();
-        maxim_heart_rate_and_oxygen_saturation(aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid);
-
-        if ((ch_hr_valid == 1) && (n_heart_rate < 190) && (n_heart_rate > 40))
-        {
-            hrTimeout = 0;
-
-            // Throw out up to 1 out of every 5 valid samples if wacky
-            if (hrValidCnt == 4)
-            {
-                hrThrowOutSamp = 1;
-                hrValidCnt = 0;
-                for (i = 12; i < 16; i++)
-                {
-                    if (n_heart_rate < hr_buf[i] + 10)
-                    {
-                        hrThrowOutSamp = 0;
-                        hrValidCnt   = 4;
-                    }
-                }
-            }
-            else
-            {
-                hrValidCnt = hrValidCnt + 1;
-            }
-
-            if (hrThrowOutSamp == 0)
-            {
-
-                // Shift New Sample into buffer
-                for(i = 0; i < 15; i++)
-                {
-                    hr_buf[i] = hr_buf[i + 1];
-                }
-                hr_buf[15] = n_heart_rate;
-
-                // Update buffer fill value
-                if (hrBuffFilled < 16)
-                {
-                    hrBuffFilled = hrBuffFilled + 1;
-                }
-
-                // Take moving average
-                hrSum = 0;
-                if (hrBuffFilled < 2)
-                {
-                    hrAvg = 0;
-                }
-                else if (hrBuffFilled < 4)
-                {
-                    for(i = 14; i < 16; i++)
-                    {
-                        hrSum = hrSum + hr_buf[i];
-                    }
-                    hrAvg = hrSum >> 1;
-                }
-                else if (hrBuffFilled < 8)
-                {
-                    for(i = 12; i < 16; i++)
-                    {
-                        hrSum = hrSum + hr_buf[i];
-                    }
-                    hrAvg = hrSum >> 2;
-                }
-                else if (hrBuffFilled < 16)
-                {
-                    for(i = 8; i < 16; i++)
-                    {
-                        hrSum = hrSum + hr_buf[i];
-                    }
-                    hrAvg = hrSum >> 3;
-                }
-                else
-                {
-                    for(i = 0; i < 16; i++)
-                    {
-                        hrSum = hrSum + hr_buf[i];
-                    }
-                    hrAvg = hrSum >> 4;
-                }
-            }
-            hrThrowOutSamp = 0;
+                un_brightness = (int)f_temp;
         }
         else
         {
+            f_temp = un_prev_data - aun_red_buffer[i];
+            f_temp /= (un_max - un_min);
+            f_temp *= MAX_BRIGHTNESS;
+            un_brightness += (int)f_temp;
+            if(un_brightness > MAX_BRIGHTNESS)
+                un_brightness = MAX_BRIGHTNESS;
+        }
+    }
+    maxim_heart_rate_and_oxygen_saturation(aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid);
+
+    if ((ch_hr_valid == 1) && (n_heart_rate < 190) && (n_heart_rate > 40))
+    {
+        hrTimeout = 0;
+
+        // Throw out up to 1 out of every 5 valid samples if wacky
+        if (hrValidCnt == 4)
+        {
+            hrThrowOutSamp = 1;
             hrValidCnt = 0;
-            if (hrTimeout == 4)
+            for (i = 12; i < 16; i++)
+            {
+                if (n_heart_rate < hr_buf[i] + 10)
+                {
+                    hrThrowOutSamp = 0;
+                    hrValidCnt   = 4;
+                }
+            }
+        }
+        else
+        {
+            hrValidCnt = hrValidCnt + 1;
+        }
+
+        if (hrThrowOutSamp == 0)
+        {
+
+            // Shift New Sample into buffer
+            for(i = 0; i < 15; i++)
+            {
+                hr_buf[i] = hr_buf[i + 1];
+            }
+            hr_buf[15] = n_heart_rate;
+
+            // Update buffer fill value
+            if (hrBuffFilled < 16)
+            {
+                hrBuffFilled = hrBuffFilled + 1;
+            }
+
+            // Take moving average
+            hrSum = 0;
+            if (hrBuffFilled < 2)
             {
                 hrAvg = 0;
-                hrBuffFilled = 0;
+            }
+            else if (hrBuffFilled < 4)
+            {
+                for(i = 14; i < 16; i++)
+                {
+                    hrSum = hrSum + hr_buf[i];
+                }
+                hrAvg = hrSum >> 1;
+            }
+            else if (hrBuffFilled < 8)
+            {
+                for(i = 12; i < 16; i++)
+                {
+                    hrSum = hrSum + hr_buf[i];
+                }
+                hrAvg = hrSum >> 2;
+            }
+            else if (hrBuffFilled < 16)
+            {
+                for(i = 8; i < 16; i++)
+                {
+                    hrSum = hrSum + hr_buf[i];
+                }
+                hrAvg = hrSum >> 3;
             }
             else
             {
-                hrTimeout++;
+                for(i = 0; i < 16; i++)
+                {
+                    hrSum = hrSum + hr_buf[i];
+                }
+                hrAvg = hrSum >> 4;
             }
         }
-
-        if ((ch_spo2_valid == 1) && (n_spo2 > 59))
+        hrThrowOutSamp = 0;
+    }
+    else
+    {
+        hrValidCnt = 0;
+        if (hrTimeout == 4)
         {
-            spo2Timeout = 0;
-
-            // Throw out up to 1 out of every 5 valid samples if wacky
-            if (spo2ValidCnt == 4)
-            {
-                spo2ThrowOutSamp = 1;
-                spo2ValidCnt = 0;
-                for (i = 12; i < 16; i++)
-                {
-                    if (n_spo2 > spo2_buf[i] - 10)
-                    {
-                        spo2ThrowOutSamp = 0;
-                        spo2ValidCnt   = 4;
-                    }
-                }
-            }
-            else
-            {
-                spo2ValidCnt = spo2ValidCnt + 1;
-            }
-
-            if (spo2ThrowOutSamp == 0)
-            {
-
-                // Shift New Sample into buffer
-                for(i = 0; i < 15; i++)
-                {
-                    spo2_buf[i] = spo2_buf[i + 1];
-                }
-                spo2_buf[15] = n_spo2;
-
-                // Update buffer fill value
-                if (spo2BuffFilled < 16)
-                {
-                    spo2BuffFilled = spo2BuffFilled + 1;
-                }
-
-                // Take moving average
-                spo2Sum = 0;
-                if (spo2BuffFilled < 2)
-                {
-                    spo2Avg = 0;
-                }
-                else if (spo2BuffFilled < 4)
-                {
-                    for(i = 14; i < 16; i++)
-                    {
-                        spo2Sum = spo2Sum + spo2_buf[i];
-                    }
-                    spo2Avg = spo2Sum/2.f;
-                }
-                else if (spo2BuffFilled < 8)
-                {
-                    for(i = 12; i < 16; i++)
-                    {
-                        spo2Sum = spo2Sum + spo2_buf[i];
-                    }
-                    spo2Avg = spo2Sum/4.f;
-                }
-                else if (spo2BuffFilled < 16)
-                {
-                    for(i = 8; i < 16; i++)
-                    {
-                        spo2Sum = spo2Sum + spo2_buf[i];
-                    }
-                    spo2Avg = spo2Sum /8.f;
-                }
-                else
-                {
-                    for(i = 0; i < 16; i++)
-                    {
-                        spo2Sum = spo2Sum + spo2_buf[i];
-                    }
-                    spo2Avg = spo2Sum/16.f;
-                }
-            }
-            spo2ThrowOutSamp = 0;
+            hrAvg = 0;
+            hrBuffFilled = 0;
         }
         else
         {
+            hrTimeout++;
+        }
+    }
+
+    if ((ch_spo2_valid == 1) && (n_spo2 > 59))
+    {
+        spo2Timeout = 0;
+
+        // Throw out up to 1 out of every 5 valid samples if wacky
+        if (spo2ValidCnt == 4)
+        {
+            spo2ThrowOutSamp = 1;
             spo2ValidCnt = 0;
-            if (spo2Timeout == 4)
+            for (i = 12; i < 16; i++)
+            {
+                if (n_spo2 > spo2_buf[i] - 10)
+                {
+                    spo2ThrowOutSamp = 0;
+                    spo2ValidCnt   = 4;
+                }
+            }
+        }
+        else
+        {
+            spo2ValidCnt = spo2ValidCnt + 1;
+        }
+
+        if (spo2ThrowOutSamp == 0)
+        {
+
+            // Shift New Sample into buffer
+            for(i = 0; i < 15; i++)
+            {
+                spo2_buf[i] = spo2_buf[i + 1];
+            }
+            spo2_buf[15] = n_spo2;
+
+            // Update buffer fill value
+            if (spo2BuffFilled < 16)
+            {
+                spo2BuffFilled = spo2BuffFilled + 1;
+            }
+
+            // Take moving average
+            spo2Sum = 0;
+            if (spo2BuffFilled < 2)
             {
                 spo2Avg = 0;
-                spo2BuffFilled = 0;
+            }
+            else if (spo2BuffFilled < 4)
+            {
+                for(i = 14; i < 16; i++)
+                {
+                    spo2Sum = spo2Sum + spo2_buf[i];
+                }
+                spo2Avg = spo2Sum/2.f;
+            }
+            else if (spo2BuffFilled < 8)
+            {
+                for(i = 12; i < 16; i++)
+                {
+                    spo2Sum = spo2Sum + spo2_buf[i];
+                }
+                spo2Avg = spo2Sum/4.f;
+            }
+            else if (spo2BuffFilled < 16)
+            {
+                for(i = 8; i < 16; i++)
+                {
+                    spo2Sum = spo2Sum + spo2_buf[i];
+                }
+                spo2Avg = spo2Sum /8.f;
             }
             else
             {
-                spo2Timeout++;
+                for(i = 0; i < 16; i++)
+                {
+                    spo2Sum = spo2Sum + spo2_buf[i];
+                }
+                spo2Avg = spo2Sum/16.f;
             }
         }
-
-        //Send_To_PC(hrAvg, spo2Avg);
-		
-//		Send_To_Robot(hrAvg, spo2Avg);
-//    }
+        spo2ThrowOutSamp = 0;
+    }
+    else
+    {
+        spo2ValidCnt = 0;
+        if (spo2Timeout == 4)
+        {
+            spo2Avg = 0;
+            spo2BuffFilled = 0;
+        }
+        else
+        {
+            spo2Timeout++;
+        }
+    }
+	if(hrAvg < 10){
+		sprintf(pData_Show->HeartRate, "  %d", hrAvg);
+	}
+	else if(hrAvg < 100){
+		sprintf(pData_Show->HeartRate, " %d", hrAvg);
+	}
+	else{
+		sprintf(pData_Show->HeartRate, "%d", hrAvg);
+	}
+	if(spo2Avg < 10){
+		sprintf(pData_Show->Spo2, " %.2f", spo2Avg);
+	}
+	else{
+		sprintf(pData_Show->Spo2, "%.2f", spo2Avg);
+	}
 }
 
 

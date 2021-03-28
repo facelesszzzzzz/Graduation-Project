@@ -22,14 +22,20 @@ typedef union
 	uint8_t ALL;
 }Byte8;
 
-typedef union
+typedef struct
 {
-	uint8_t Ev25MsFlag 	: 1;
-	uint8_t Ev50MsFlag 	: 1;
-	uint8_t Ev100MsFlag : 1;
-	uint8_t Ev500MsFlag : 1;
-	uint8_t Ev1SFlag 	: 1;
-}TimeTypeDef_t;
+	uint8_t HeartRate[4];
+	uint8_t Spo2[6];
+}Oled_Data_Show_t;
+
+//typedef union
+//{
+//	uint8_t Ev25MsFlag 	: 1;
+//	uint8_t Ev50MsFlag 	: 1;
+//	uint8_t Ev100MsFlag : 1;
+//	uint8_t Ev500MsFlag : 1;
+//	uint8_t Ev1SFlag 	: 1;
+//}TimeTypeDef_t;
 
 //typedef struct
 //{

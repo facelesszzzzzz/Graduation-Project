@@ -335,15 +335,15 @@ void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned 
 void OLED_Init(void)
 { 	
  
-	GPIO_InitTypeDef  GPIO_InitStructure;
- 	
- 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);	 	//使能PB端口时钟
+//	GPIO_InitTypeDef  GPIO_InitStructure;
+// 	
+// 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);	 	//使能PB端口时钟
 
-	GPIO_InitStructure.GPIO_Pin = OLED_SCK|OLED_SDA;	 		//PB12,PB13推挽输出  
- 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 	//推挽输出
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;			//速度50MHz
- 	GPIO_Init(OLED_GPIO, &GPIO_InitStructure);	  				//初始化GPIOA
-  	delay_ms(1000);
+//	GPIO_InitStructure.GPIO_Pin = OLED_SCK|OLED_SDA;	 		//PB12,PB13推挽输出  
+// 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 	//推挽输出
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;			//速度50MHz
+// 	GPIO_Init(OLED_GPIO, &GPIO_InitStructure);	  				//初始化GPIOA
+//  	delay_ms(1000);
   	OLED_WR_Byte(0xAE,OLED_CMD);//--display off
 	OLED_WR_Byte(0x00,OLED_CMD);//---set low column address
 	OLED_WR_Byte(0x10,OLED_CMD);//---set high column address
@@ -382,6 +382,10 @@ void OLED_Init(void)
 	OLED_Clear();
 	OLED_BMPINIT;
 }  
+
+Oled_Data_Show_t gData_Show;
+Oled_Data_Show_t *pData_Show = &gData_Show;
+
 /**********************************************************************
 * 函数名称：OLED_MAIN
 * 功能描述：各个模块初始化完毕后进行最终显示
@@ -391,26 +395,29 @@ void OLED_Init(void)
 **********************************************************************/
 void OLED_MAIN(void)
 {
-	u8 i,num = 0;
+//	u8 i,num = 0;
 	OLED_Clear();
-	OLED_DrawBMP(16, 0, 32, 2, BMP_HOUSE); 				//显示房子图标
-	OLED_DrawBMP(96, 0, 112, 2, BMP_HOUSE); 			//显示房子图标
-	for(i = 0; i < 4; i++)
-	{
-		OLED_ShowCHinese((i+2) * 16, 0, num);			//显示主题
-		num++;
-	}
-	num = 0;
-	//默认状态
-	OLED_BMPBEEPCLOSED;
-	OLED_BMPNOFAN;
-	OLED_BMPNOHELP;
-	OLED_BMPMANUAL;
-	OLED_BMPDOORCLOSED;
-	
-	OLED_BMPTEM;
-	OLED_BMPHUMI;
-	OLED_BMPMQ2;
+	OLED_BMPHEARTRATE;
+	OLED_BMPSPO2;
+	OLED_BMPTEMPGUN;
+//	OLED_DrawBMP(16, 0, 32, 2, BMP_HOUSE); 				//显示房子图标
+//	OLED_DrawBMP(96, 0, 112, 2, BMP_HOUSE); 			//显示房子图标
+//	for(i = 0; i < 4; i++)
+//	{
+//		OLED_ShowCHinese((i+2) * 16, 0, num);			//显示主题
+//		num++;
+//	}
+//	num = 0;
+//	//默认状态
+//	OLED_BMPBEEPCLOSED;
+//	OLED_BMPNOFAN;
+//	OLED_BMPNOHELP;
+//	OLED_BMPMANUAL;
+//	OLED_BMPDOORCLOSED;
+//	
+//	OLED_BMPTEM;
+//	OLED_BMPHUMI;
+//	OLED_BMPMQ2;
 }
 /**********************************************************************
 * 函数名称：OLED_SHOWBMP
@@ -484,6 +491,12 @@ void OLED_SHOWBMP(Byte8 data)
 	{
 		OLED_BMPNOHELP;
 	}
+}
+
+void OLED_SHOWDATA()
+{
+	OLED_ShowString(20, 0, pData_Show->HeartRate, 16);
+	OLED_ShowString(82, 0, pData_Show->Spo2, 16);
 }
 
 

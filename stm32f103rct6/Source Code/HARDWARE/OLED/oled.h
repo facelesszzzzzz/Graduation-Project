@@ -36,6 +36,11 @@
 #define OLED_BMPHUMI			OLED_DrawBMP(64, 4, 80, 6, BMP_HUMI)		//显示湿度图标
 #define OLED_BMPMQ2				OLED_DrawBMP(32, 6, 48, 8, BMP_MQ2)			//显示烟雾浓度图标
 
+#define OLED_BMPHEARTRATE		OLED_DrawBMP(0, 0, 16, 2, BMP_HEARTRATE)
+#define OLED_BMPSPO2			OLED_DrawBMP(64, 0, 80, 2, BMP_SPO2)
+#define OLED_BMPTEMPGUN			OLED_DrawBMP(96, 2, 128, 6, BMP_TEMPGUN)
+
+
 //-----------------OLED IIC端口定义------------------------------------------------------ 					   
 //第一块OLED
 #define OLED_GPIO 					GPIOB
@@ -88,6 +93,7 @@ void IIC_Wait_Ack(void);
 
 void OLED_MAIN(void);
 void OLED_SHOWBMP(Byte8 data);
+void OLED_SHOWDATA(void);
 
 
 

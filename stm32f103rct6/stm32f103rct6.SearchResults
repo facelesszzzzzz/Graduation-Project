@@ -1,4 +1,5 @@
----- Ev25Ms Matches (3 in 2 files) ----
-Bsp_interrupt.h (source code\bsp\inc):#define Ev25Ms				gTimer[0]
-Run.c (source code\user):	if(Ev25Ms) return;
-Run.c (source code\user):	Ev25Ms = SysTick_25MS;
+---- Ev1SFlag Matches (4 in 2 files) ----
+Bsp_interrupt.c (source code\bsp\src):			pEvTime->Ev1SFlag = 1;		// 1SÊÂ¼þ
+Bsp_interrupt.c (source code\bsp\src):	if(pEvTime->Ev1SFlag)
+Bsp_interrupt.c (source code\bsp\src):		pEvTime->Ev1SFlag = 0;
+Datatype.h (source code\system\datatype)://	uint8_t Ev1SFlag 	: 1;

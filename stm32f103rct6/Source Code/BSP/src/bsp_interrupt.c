@@ -1,8 +1,8 @@
 #include "bsp_interrupt.h"
-
+#if 0
 static TimeTypeDef_t gEvTime;
 static TimeTypeDef_t *pEvTime = &gEvTime;
-
+#endif
 uint16_t gTimer[MAX_TIMER];
 
 void SysTick_Handler()
