@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "max30102.h"
 #include "oled.h"
+#include "GY615.h"
 
 
 void System_Init()
@@ -30,13 +31,14 @@ void Task_25MsHandle()
 	if(Ev25Ms) return;
 	Ev25Ms = SysTick_25MS;
 	OLED_SHOWDATA();
+	Search_GY615_Data();
 }
 
 void Task_50MsHandle()
 {
 	if(Ev50Ms) return;
 	Ev50Ms = SysTick_50MS;
-
+	GY615_Handle();
 }
 
 void Task_100MsHandle()

@@ -1,5 +1,10 @@
----- Ev1SFlag Matches (4 in 2 files) ----
-Bsp_interrupt.c (source code\bsp\src):			pEvTime->Ev1SFlag = 1;		// 1SÊÂ¼þ
-Bsp_interrupt.c (source code\bsp\src):	if(pEvTime->Ev1SFlag)
-Bsp_interrupt.c (source code\bsp\src):		pEvTime->Ev1SFlag = 0;
-Datatype.h (source code\system\datatype)://	uint8_t Ev1SFlag 	: 1;
+---- pData_Show Matches (9 in 2 files) ----
+Max30102.c (source code\hardware\max30102):extern Oled_Data_Show_t *pData_Show;
+Max30102.c (source code\hardware\max30102):		sprintf(pData_Show->HeartRate, "  %d", hrAvg);
+Max30102.c (source code\hardware\max30102):		sprintf(pData_Show->HeartRate, " %d", hrAvg);
+Max30102.c (source code\hardware\max30102):		sprintf(pData_Show->HeartRate, "%d", hrAvg);
+Max30102.c (source code\hardware\max30102):		sprintf(pData_Show->Spo2, " %.2f", spo2Avg);
+Max30102.c (source code\hardware\max30102):		sprintf(pData_Show->Spo2, "%.2f", spo2Avg);
+Oled.c (source code\hardware\oled):Oled_Data_Show_t *pData_Show = &gData_Show;
+Oled.c (source code\hardware\oled):	OLED_ShowString(20, 0, pData_Show->HeartRate, 16);
+Oled.c (source code\hardware\oled):	OLED_ShowString(82, 0, pData_Show->Spo2, 16);

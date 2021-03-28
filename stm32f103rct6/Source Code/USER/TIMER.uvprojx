@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\HARDWARE\TIMER;..\HARDWARE\ESP8266;..\HARDWARE\BODY;..\HARDWARE\RC522;..\HARDWARE\BEEP;..\HARDWARE\OLED;..\SYSTEM\datatype;..\HARDWARE\DHT22;..\HARDWARE\ADC;..\HARDWARE\MQ2;..\HARDWARE\RELAY;..\SYSTEM\warning;..\BSP\inc;..\HARDWARE\MAX30102</IncludePath>
+              <IncludePath>..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\HARDWARE\TIMER;..\HARDWARE\ESP8266;..\HARDWARE\BODY;..\HARDWARE\RC522;..\HARDWARE\BEEP;..\HARDWARE\OLED;..\SYSTEM\datatype;..\HARDWARE\DHT22;..\HARDWARE\ADC;..\HARDWARE\MQ2;..\HARDWARE\RELAY;..\SYSTEM\warning;..\BSP\inc;..\HARDWARE\MAX30102;..\HARDWARE\GY-615</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -437,6 +437,11 @@
               <FileName>myiic.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\MAX30102\myiic.c</FilePath>
+            </File>
+            <File>
+              <FileName>GY615.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\GY-615\GY615.c</FilePath>
             </File>
           </Files>
         </Group>

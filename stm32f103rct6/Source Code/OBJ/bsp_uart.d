@@ -34,3 +34,4 @@
 ..\obj\bsp_uart.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\bsp_uart.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\bsp_uart.o: ..\BSP\inc\bsp_gpio.h
+..\obj\bsp_uart.o: ..\HARDWARE\GY-615\GY615.h

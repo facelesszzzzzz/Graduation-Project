@@ -3,11 +3,12 @@
 #include <stdarg.h>	
 #include "bsp_uart.h"
 #include "bsp_gpio.h"
+#include "GY615.h"
 
 static Uart_Data_t gUartx_Data[3];
 static Uart_Data_t *pUart1_Data = &gUartx_Data[0];
 static Uart_Data_t *pUart2_Data = &gUartx_Data[1];
-static Uart_Data_t *pUart3_Data = &gUartx_Data[2];
+Uart_Data_t *pUart3_Data = &gUartx_Data[2];
 
 uint16_t USART_RX_STA;         		//接收状态标记
 
@@ -130,7 +131,7 @@ void BSP_Uart_Init(void)
 	Uart2_Init(9600);
 #endif
 
-#if	Uart2_EN
+#if	Uart3_EN
 	Uart3_Init(9600);
 #endif
 }
@@ -212,30 +213,42 @@ void USART1_IRQHandler(void)
 //	}  		 
 //}   
 
-//void USART3_IRQHandler(void)
-//{      	
-//	u8 res;	      
-//	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)//接收到数据
-//	{	 
-//		USART_ClearITPendingBit(USART2,USART_IT_RXNE);
-//		res = USART_ReceiveData(USART2);		
-//		if((USART2_RX_STA&(1<<15))==0)//接收完的一批数据,还没有被处理,则不再接收其他数据
-//		{ 
-//			if(USART2_RX_STA<USART2_MAX_RECV_LEN)	//还可以接收数据
-//			{
-//				TIM_SetCounter(TIM7,0);//计数器清空          				//计数器清空
-//				if(USART2_RX_STA==0) 				//使能定时器7的中断 
-//				{
-//					TIM_Cmd(TIM7,ENABLE);//使能定时器7
-//				}
-//				USART2_RX_BUF[USART2_RX_STA++]=res;	//记录接收到的值
-//			}else 
-//			{
-//				USART2_RX_STA|=1<<15;				//强制标记接收完成
-//			} 
-//		}
-//	}  		 
-//}   
+void USART3_IRQHandler(void)
+{      	
+	uint8_t sCheck_i, sCheckSum = 0;	
+	static uint8_t sRes_Num;
+	const uint8_t sCheck_Buf[4] = {GY615_HEAD, GY615_READ, GY615_REGISTER, GY615_REGISTERNUM};
+	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)//接收到数据
+	{	 
+		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
+		pUart3_Data->RxResBuf[sRes_Num] = (uint8_t)USART_ReceiveData(USART3);
+		if(sRes_Num < 4)
+		{
+			if(pUart3_Data->RxResBuf[sRes_Num] != sCheck_Buf[sRes_Num])
+			{
+				sRes_Num = RESET;	//重新接收
+				return;
+			}
+		}
+		else
+		{
+			if(sRes_Num == GY615_REC_LENGTH - 1)	//一帧接收完毕
+			{
+				for(sCheck_i = 0; sCheck_i < GY615_REC_LENGTH - 1; sCheck_i++)
+				{
+					sCheckSum += pUart3_Data->RxResBuf[sCheck_i];
+				}
+				if(pUart3_Data->RxResBuf[sCheck_i] == sCheckSum)				//接收到正确数据
+				{
+					memcpy(pUart3_Data->RxBuf, pUart3_Data->RxResBuf, GY615_REC_LENGTH);
+				}
+				sRes_Num = RESET;		//数据长度重新计算
+				return;
+			}
+		}
+		sRes_Num++;
+	}  		 
+}   
 
 #if Uart3_Printf_EN
 //串口3,printf 函数

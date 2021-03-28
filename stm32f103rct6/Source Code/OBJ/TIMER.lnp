@@ -9,6 +9,7 @@
 "..\obj\algorithm.o"
 "..\obj\max30102.o"
 "..\obj\myiic.o"
+"..\obj\gy615.o"
 "..\obj\bsp_gpio.o"
 "..\obj\bsp.o"
 "..\obj\bsp_uart.o"

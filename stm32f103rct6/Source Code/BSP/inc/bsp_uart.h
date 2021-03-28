@@ -12,7 +12,7 @@
 
 #define Uart1_Printf_EN	0
 #define Uart2_Printf_EN	0
-#define Uart3_Printf_EN	1
+#define Uart3_Printf_EN	0
 
 #define Uart1_PreemptionPriority	0
 #define Uart1_SubPriority			0
@@ -31,6 +31,7 @@ typedef struct
 {
 	uint8_t TxBuf[USARTx_TX_LENGTH];
 	uint8_t TxLen;
+	uint8_t RxResBuf[USARTx_RX_LENGTH];
 	uint8_t RxBuf[USARTx_RX_LENGTH];
 	uint8_t RxLen;
 }Uart_Data_t;
