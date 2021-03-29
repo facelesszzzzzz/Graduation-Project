@@ -43,6 +43,28 @@
 //delay_intnesting改为：delay_osintnesting
 //////////////////////////////////////////////////////////////////////////////////  
 
+
+#if SysTick_EN
+void delay_us(u32 nus)
+{
+	u16 i=0;
+	while(nus--)
+	{
+		i=10;
+		while(i--);
+	}
+}
+//毫秒级的延时
+void delay_ms(u16 nms)
+{
+	u16 i=0;
+	while(nms--)
+	{
+		i=12000;
+		while(i--);
+	}
+}
+#else
 static u8  fac_us=0;							//us延时倍乘数			   
 static u16 fac_ms=0;							//ms延时倍乘数,在ucos下,代表每个节拍的ms数
 	
@@ -223,7 +245,7 @@ void delay_ms(u16 nms)
 } 
 #endif 
 
-
+#endif
 
 
 

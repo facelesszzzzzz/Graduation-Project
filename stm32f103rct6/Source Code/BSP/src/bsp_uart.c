@@ -6,9 +6,9 @@
 #include "GY615.h"
 
 static Uart_Data_t gUartx_Data[3];
-static Uart_Data_t *pUart1_Data = &gUartx_Data[0];
+Uart_Data_t *pUart1_Data = &gUartx_Data[0];
 static Uart_Data_t *pUart2_Data = &gUartx_Data[1];
-Uart_Data_t *pUart3_Data = &gUartx_Data[2];
+static Uart_Data_t *pUart3_Data = &gUartx_Data[2];
 
 uint16_t USART_RX_STA;         		//接收状态标记
 
@@ -124,15 +124,15 @@ static void Uart3_Init(uint32_t bound)
 void BSP_Uart_Init(void)
 {
 #if	Uart1_EN
-	Uart1_Init(9600);
+	Uart1_Init(Uart1_bound);
 #endif
 
 #if	Uart2_EN
-	Uart2_Init(9600);
+	Uart2_Init(Uart2_bound);
 #endif
 
 #if	Uart3_EN
-	Uart3_Init(9600);
+	Uart3_Init(Uart3_bound);
 #endif
 }
 
@@ -172,14 +172,18 @@ void USART1_IRQHandler(void)
 			if(USART_RX_STA&0x4000)//接收到了0x0d
 			{
 				if(Res!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-				else USART_RX_STA|=0x8000;	//接收完成了 
+				else{
+					USART_RX_STA|=0x8000;	//接收完成了
+					pUart1_Data->RxLen = USART_RX_STA&0x3FFF;
+					memcpy(pUart1_Data->RxBuf, pUart1_Data->RxResBuf, pUart1_Data->RxLen);
+				}
 			}
 			else //还没收到0X0D
 			{	
 				if(Res==0x0d)USART_RX_STA|=0x4000;
 				else
 				{
-					pUart1_Data->RxBuf[USART_RX_STA&0X3FFF]=Res ;
+					pUart1_Data->RxResBuf[USART_RX_STA&0X3FFF]=Res ;
 					USART_RX_STA++;
 					if(USART_RX_STA>(USARTx_RX_LENGTH-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
 				}		 

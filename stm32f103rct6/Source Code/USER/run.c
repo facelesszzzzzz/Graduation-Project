@@ -4,6 +4,7 @@
 #include "max30102.h"
 #include "oled.h"
 #include "GY615.h"
+#include "GA6.h"
 
 
 void System_Init()
@@ -13,6 +14,7 @@ void System_Init()
 //	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
 //	//uart_init(115200);	 							//串口初始化为115200
 	OLED_Init();										//显示屏初始化
+//	GA6_Init();											//GA6模块初始化
 //	RELAY_Init();										//继电器初始化
 //	BEEP_Init();										//蜂鸣器初始化
 //	KEY_Init();											//按键初始化

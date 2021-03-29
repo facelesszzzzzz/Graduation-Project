@@ -10,6 +10,10 @@
 #define Uart2_EN	0
 #define Uart3_EN	1
 
+#define Uart1_bound		115200U
+#define Uart2_bound		9600U
+#define Uart3_bound		9600U
+
 #define Uart1_Printf_EN	0
 #define Uart2_Printf_EN	0
 #define Uart3_Printf_EN	0
@@ -25,6 +29,7 @@
 
 #define USARTx_TX_LENGTH		200
 #define USARTx_RX_LENGTH		200
+
 
 
 typedef struct
