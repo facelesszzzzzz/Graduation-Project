@@ -44,3 +44,4 @@
 ..\obj\run.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\run.o: ..\HARDWARE\GY-615\GY615.h
 ..\obj\run.o: ..\HARDWARE\GA6\GA6.h
+..\obj\run.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

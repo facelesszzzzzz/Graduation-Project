@@ -1,16 +1,21 @@
----- USART_RX_STA Matches (27 in 6 files) ----
+---- USART_RX_STA Matches (32 in 6 files) ----
 Bsp_uart.c (source code\bsp\src):uint16_t USART_RX_STA;         		//接收状态标记
 Bsp_uart.c (source code\bsp\src):		if((USART_RX_STA&0x8000)==0)//接收未完成
 Bsp_uart.c (source code\bsp\src):			if(USART_RX_STA&0x4000)//接收到了0x0d
 Bsp_uart.c (source code\bsp\src):				if(Res!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-Bsp_uart.c (source code\bsp\src):				else USART_RX_STA|=0x8000;	//接收完成了 
+Bsp_uart.c (source code\bsp\src):					USART_RX_STA|=0x8000;	//接收完成了
+Bsp_uart.c (source code\bsp\src):					pUart1_Data->RxLen = USART_RX_STA&0x3FFF;
 Bsp_uart.c (source code\bsp\src):				if(Res==0x0d)USART_RX_STA|=0x4000;
-Bsp_uart.c (source code\bsp\src):					pUart1_Data->RxBuf[USART_RX_STA&0X3FFF]=Res ;
+Bsp_uart.c (source code\bsp\src):					pUart1_Data->RxResBuf[USART_RX_STA&0X3FFF]=Res ;
 Bsp_uart.c (source code\bsp\src):					USART_RX_STA++;
 Bsp_uart.c (source code\bsp\src):					if(USART_RX_STA>(USARTx_RX_LENGTH-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
 Bsp_uart.h (source code\bsp\inc):extern uint16_t USART_RX_STA;         		//接收状态标记
+GA6.c (source code\hardware\ga6):extern uint16_t USART_RX_STA;
+GA6.c (source code\hardware\ga6):	USART_RX_STA=0;
 GA6.c (source code\hardware\ga6):			if(USART_RX_STA&0X8000)//接收到期待的应答结果
 GA6.c (source code\hardware\ga6):				USART_RX_STA=0;
+GA6.c (source code\hardware\ga6):	if(USART_RX_STA&0X8000)										//接收到一次数据了
+GA6.c (source code\hardware\ga6):		spUart_Data->RxBuf[USART_RX_STA&0X7FFF]=0;						//添加结束符
 Run.c (source code\user)://	if(USART_RX_STA&0x8000)
 Run.c (source code\user)://		sUart1_Data->RxLen = USART_RX_STA&0x3fff;//得到此次接收到的数据长度
 Run.c (source code\user)://		USART_RX_STA=0;

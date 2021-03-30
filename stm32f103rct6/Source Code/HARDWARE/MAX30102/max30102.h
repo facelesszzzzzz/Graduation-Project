@@ -66,6 +66,14 @@
 #include "stdbool.h"
 
 
+/* 正常心率范围60~100 */
+#define HEARTRATE_MAX	100
+#define	HEARTRATE_MIN	60
+
+/* 正常血氧范围95~100 */
+#define SPO2_MAX		100
+#define SPO2_MIN		95
+
 #define MAX_BRIGHTNESS 255
 
 #define I2C_WRITE_ADDR 0xAE

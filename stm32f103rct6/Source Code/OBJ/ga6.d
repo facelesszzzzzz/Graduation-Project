@@ -37,6 +37,6 @@
 ..\obj\ga6.o: ..\BSP\inc\bsp_uart.h
 ..\obj\ga6.o: ..\BSP\inc\bsp_interrupt.h
 ..\obj\ga6.o: ..\BSP\inc\bsp.h
+..\obj\ga6.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\ga6.o: ..\SYSTEM\delay\delay.h
 ..\obj\ga6.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-..\obj\ga6.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

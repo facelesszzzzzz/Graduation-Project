@@ -13,6 +13,8 @@
 
 #define GY615_READ_CHECKSUM		0xB5
 
+#define BodyTemp_MAX			38
+
 void Search_GY615_Data(void);		//查询GY615数据
 void GY615_Handle(void);			//GY615数据处理
 #endif

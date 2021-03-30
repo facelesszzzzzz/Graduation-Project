@@ -31,6 +31,7 @@ typedef struct
 	uint8_t	BodyTemp[6];		//ÈËÌåÎÂ¶È
 }Oled_Data_Show_t;
 
+
 //typedef union
 //{
 //	uint8_t Ev25MsFlag 	: 1;

@@ -14,16 +14,26 @@ void Search_GY615_Data()
 	}
 }
 extern Oled_Data_Show_t *pData_Show;
+extern Byte8 gHandleState;
 void GY615_Handle()
 {
 	Uart_Data_t *sUart3_Data = GetUart_Data_t(Uart3_NUM);
 	uint16_t sTO = 0, sTA = 0, sBO = 0;
+	float sFTO, sFTA, sFBO;
 	sTO = (sUart3_Data->RxBuf[5] << 8) + sUart3_Data->RxBuf[6];
 	sTA = (sUart3_Data->RxBuf[7] << 8) + sUart3_Data->RxBuf[8];
 	sBO = (sUart3_Data->RxBuf[9] << 8) + sUart3_Data->RxBuf[10];
-	sprintf(pData_Show->TargetTemp, "%.2f", (float)sTO/100);
-	sprintf(pData_Show->Environmenttemp, "%.2f", (float)sTA/100);
-	sprintf(pData_Show->BodyTemp, "%.2f", (float)sBO/100);
+	sFTO = (float)sTO/100;
+	sFTA = (float)sTA/100;
+	sFBO = (float)sBO/100;
+	sprintf(pData_Show->TargetTemp, "%.2f", sFTO);
+	sprintf(pData_Show->Environmenttemp, "%.2f", sFTA);
+	sprintf(pData_Show->BodyTemp, "%.2f", sFBO);
+	if(sFBO >= BodyTemp_MAX){
+		gHandleState.Bit.b4 = 1;
+	}else{
+		gHandleState.Bit.b4 = 0;
+	}
 }
 
 

@@ -327,7 +327,7 @@ void MAX30102_Init(void)
     maxim_heart_rate_and_oxygen_saturation(aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid);
 
 }
-
+extern Byte8 gHandleState;
 void MAX30102_Handle(void)
 {
 	int32_t i;
@@ -580,6 +580,21 @@ void MAX30102_Handle(void)
 	else{
 		sprintf(pData_Show->Spo2, "%.2f", spo2Avg);
 	}
+	if(hrAvg >= HEARTRATE_MAX){
+		gHandleState.Bit.b1 = 1;
+	}else if(hrAvg <= HEARTRATE_MIN && hrAvg > 0){
+		gHandleState.Bit.b0 = 1;
+	}else{
+		gHandleState.ALL &= ~0x03;
+	}
+	if(spo2Avg >= SPO2_MAX){
+		gHandleState.Bit.b3 = 1;
+	}else if(spo2Avg <= SPO2_MIN && spo2Avg > 0){
+		gHandleState.Bit.b2 = 1;
+	}else{
+		gHandleState.ALL &= ~0x0C;
+	}
+	
 }
 
 

@@ -5,6 +5,7 @@
 #include "oled.h"
 #include "GY615.h"
 #include "GA6.h"
+#include <string.h>
 
 
 void System_Init()
@@ -14,7 +15,7 @@ void System_Init()
 //	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
 //	//uart_init(115200);	 							//串口初始化为115200
 	OLED_Init();										//显示屏初始化
-//	GA6_Init();											//GA6模块初始化
+	GA6_Init();											//GA6模块初始化
 //	RELAY_Init();										//继电器初始化
 //	BEEP_Init();										//蜂鸣器初始化
 //	KEY_Init();											//按键初始化
@@ -26,6 +27,51 @@ void System_Init()
 //	WIFI_Connect();										//wifi连接
 	OLED_MAIN();										//OLED显示
 //	TIM3_Int_Init(499,7199);							//72Mhz/(7199+1)=10Khz的.计数频率，0.1ms,  计数到(499+1)为50ms  
+}
+/***************
+ * gHandleState
+ * b0:心率偏低
+ * b1:心率偏高
+ * b2:血氧偏低
+ * b3:血氧偏高
+ * b4:体温偏高
+ **************/
+Byte8 gHandleState;
+extern Oled_Data_Show_t *pData_Show;
+void State1sTimeHandle()
+{
+	static Oled_Data_Show_t sData;
+	static uint8_t sStateTime;					
+	static uint8_t sStartSend, sStartSendTime;
+	static uint8_t sTimeInterval, sStateTimeInterval;//时间间隔和状态间隔
+	if(gHandleState.ALL > 0 && !sStateTimeInterval){
+		sStateTime++;
+		if(sStateTime >= 30){	//超过30s就进行短信报警
+			sStateTime = 0;
+			GA6_SendMessageCmd;
+			memcpy(&sData, pData_Show, sizeof(Oled_Data_Show_t));
+			sStartSend = 1;
+		}
+	}
+	else{
+		sStateTime = 0;
+	}
+	if(sStartSend){
+		sStartSendTime++;
+		if(sStartSendTime >= 5){		//5s之后发送短信内容
+			sStartSend = 0;
+			sStateTimeInterval = 1;
+			//发送数据处理
+			GA6_SendMessage(sData);
+		}
+	}
+	if(sStateTimeInterval){				//发送过一次之后要间隔1分钟才能进行短信下次发送
+		sTimeInterval++;
+		if(sTimeInterval >= 60){
+			sStateTimeInterval = 0;		//允许短信发送
+			sTimeInterval = 0;
+		}
+	}
 }
 
 void Task_25MsHandle()
@@ -53,13 +99,13 @@ void Task_500MsHandle()
 {
 	if(Ev500Ms) return;
 	Ev500Ms = SysTick_500MS;
+	MAX30102_Handle();
 }
-
 void Task_1SHandle()
 {
 	if(Ev1S) return;
 	Ev1S = SysTick_1S;
-	MAX30102_Handle();
+	State1sTimeHandle();
 }
 
 void System_Running()
