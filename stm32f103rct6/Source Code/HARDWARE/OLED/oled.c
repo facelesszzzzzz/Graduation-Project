@@ -380,7 +380,7 @@ void OLED_Init(void)
 	OLED_WR_Byte(0xAF,OLED_CMD);//--turn on oled panel
 
 	OLED_Clear();
-	OLED_BMPINIT;
+//	OLED_BMPINIT;
 }  
 
 Oled_Data_Show_t gData_Show;
@@ -495,9 +495,9 @@ void OLED_SHOWBMP(Byte8 data)
 
 void OLED_SHOWDATA()
 {
-	OLED_ShowString(20, 0, pData_Show->HeartRate, 16);
-	OLED_ShowString(82, 0, pData_Show->Spo2, 16);
-	OLED_ShowString(48, 2, pData_Show->BodyTemp, 16);
+	OLED_ShowString(20, 3, pData_Show->HeartRate, 16);
+	OLED_ShowString(20, 6, pData_Show->Spo2, 16);
+	OLED_ShowString(48, 0, pData_Show->BodyTemp, 16);
 }
 
 

@@ -36,9 +36,9 @@
 #define OLED_BMPHUMI			OLED_DrawBMP(64, 4, 80, 6, BMP_HUMI)		//显示湿度图标
 #define OLED_BMPMQ2				OLED_DrawBMP(32, 6, 48, 8, BMP_MQ2)			//显示烟雾浓度图标
 
-#define OLED_BMPHEARTRATE		OLED_DrawBMP(0, 0, 16, 2, BMP_HEARTRATE)
-#define OLED_BMPSPO2			OLED_DrawBMP(64, 0, 80, 2, BMP_SPO2)
-#define OLED_BMPTEMPGUN			OLED_DrawBMP(96, 2, 128, 6, BMP_TEMPGUN)
+#define OLED_BMPHEARTRATE		OLED_DrawBMP(0, 3, 16, 5, BMP_HEARTRATE)
+#define OLED_BMPSPO2			OLED_DrawBMP(0, 6, 16, 8, BMP_SPO2)
+#define OLED_BMPTEMPGUN			OLED_DrawBMP(96, 0, 128, 4, BMP_TEMPGUN)
 
 
 //-----------------OLED IIC端口定义------------------------------------------------------ 					   

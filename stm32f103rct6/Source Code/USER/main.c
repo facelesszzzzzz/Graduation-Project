@@ -4,11 +4,11 @@
 
 int main(void)
 {		
-	BSP_Init();
-	System_Init();
+	BSP_Init();					//硬件底层初始化
+	System_Init();			//模块配置初始化
   	while(1)
 	{
-		System_Running();
+		System_Running();	//后台系统的运行
 	}	 
 }	 
  

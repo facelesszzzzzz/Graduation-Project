@@ -24,8 +24,8 @@ typedef union
 
 typedef struct
 {
-	uint8_t HeartRate[4];		//心率
-	uint8_t Spo2[6];			//血氧浓度
+	uint8_t HeartRate[8];		//心率
+	uint8_t Spo2[10];			//血氧浓度
 	uint8_t TargetTemp[6];		//目标温度
 	uint8_t Environmenttemp[6];	//环境温度
 	uint8_t	BodyTemp[6];		//人体温度

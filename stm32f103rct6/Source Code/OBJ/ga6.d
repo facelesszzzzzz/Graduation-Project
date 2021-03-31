@@ -40,3 +40,5 @@
 ..\obj\ga6.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\ga6.o: ..\SYSTEM\delay\delay.h
 ..\obj\ga6.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\ga6.o: ..\HARDWARE\OLED\oled.h
+..\obj\ga6.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

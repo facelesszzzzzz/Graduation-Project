@@ -566,19 +566,19 @@ void MAX30102_Handle(void)
         }
     }
 	if(hrAvg < 10){
-		sprintf(pData_Show->HeartRate, "  %d", hrAvg);
+		sprintf(pData_Show->HeartRate, "  %d bpm", hrAvg);
 	}
 	else if(hrAvg < 100){
-		sprintf(pData_Show->HeartRate, " %d", hrAvg);
+		sprintf(pData_Show->HeartRate, " %d bpm", hrAvg);
 	}
 	else{
-		sprintf(pData_Show->HeartRate, "%d", hrAvg);
+		sprintf(pData_Show->HeartRate, "%d bpm", hrAvg);
 	}
 	if(spo2Avg < 10){
-		sprintf(pData_Show->Spo2, " %.2f", spo2Avg);
+		sprintf(pData_Show->Spo2, " %.2f %%", spo2Avg);
 	}
 	else{
-		sprintf(pData_Show->Spo2, "%.2f", spo2Avg);
+		sprintf(pData_Show->Spo2, "%.2f %%", spo2Avg);
 	}
 	if(hrAvg >= HEARTRATE_MAX){
 		gHandleState.Bit.b1 = 1;
