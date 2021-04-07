@@ -1,31 +1,12 @@
----- USART_RX_STA Matches (32 in 6 files) ----
-Bsp_uart.c (source code\bsp\src):uint16_t USART_RX_STA;         		//接收状态标记
-Bsp_uart.c (source code\bsp\src):		if((USART_RX_STA&0x8000)==0)//接收未完成
-Bsp_uart.c (source code\bsp\src):			if(USART_RX_STA&0x4000)//接收到了0x0d
-Bsp_uart.c (source code\bsp\src):				if(Res!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-Bsp_uart.c (source code\bsp\src):					USART_RX_STA|=0x8000;	//接收完成了
-Bsp_uart.c (source code\bsp\src):					pUart1_Data->RxLen = USART_RX_STA&0x3FFF;
-Bsp_uart.c (source code\bsp\src):				if(Res==0x0d)USART_RX_STA|=0x4000;
-Bsp_uart.c (source code\bsp\src):					pUart1_Data->RxResBuf[USART_RX_STA&0X3FFF]=Res ;
-Bsp_uart.c (source code\bsp\src):					USART_RX_STA++;
-Bsp_uart.c (source code\bsp\src):					if(USART_RX_STA>(USARTx_RX_LENGTH-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
-Bsp_uart.h (source code\bsp\inc):extern uint16_t USART_RX_STA;         		//接收状态标记
-GA6.c (source code\hardware\ga6):extern uint16_t USART_RX_STA;
-GA6.c (source code\hardware\ga6):	USART_RX_STA=0;
-GA6.c (source code\hardware\ga6):			if(USART_RX_STA&0X8000)//接收到期待的应答结果
-GA6.c (source code\hardware\ga6):				USART_RX_STA=0;
-GA6.c (source code\hardware\ga6):	if(USART_RX_STA&0X8000)										//接收到一次数据了
-GA6.c (source code\hardware\ga6):		spUart_Data->RxBuf[USART_RX_STA&0X7FFF]=0;						//添加结束符
-Run.c (source code\user)://	if(USART_RX_STA&0x8000)
-Run.c (source code\user)://		sUart1_Data->RxLen = USART_RX_STA&0x3fff;//得到此次接收到的数据长度
-Run.c (source code\user)://		USART_RX_STA=0;
-Usart.c (source code\system\usart):u16 USART_RX_STA=0;       //接收状态标记	  
-Usart.c (source code\system\usart)://		if((USART_RX_STA&0x8000)==0)//接收未完成
-Usart.c (source code\system\usart)://			if(USART_RX_STA&0x4000)//接收到了0x0d
-Usart.c (source code\system\usart)://				if(Res!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-Usart.c (source code\system\usart)://				else USART_RX_STA|=0x8000;	//接收完成了 
-Usart.c (source code\system\usart)://				if(Res==0x0d)USART_RX_STA|=0x4000;
-Usart.c (source code\system\usart)://					USART_RX_BUF[USART_RX_STA&0X3FFF]=Res ;
-Usart.c (source code\system\usart)://					USART_RX_STA++;
-Usart.c (source code\system\usart)://					if(USART_RX_STA>(USART_REC_LEN-1))USART_RX_STA=0;//接收数据错误,重新开始接收	  
-Usart.h (source code\system\usart):extern u16 USART_RX_STA;         		//接收状态标记	
+---- i2c_Stop Matches (11 in 3 files) ----
+Max30102.c (source code\hardware\max30102):    i2c_Stop();
+Max30102.c (source code\hardware\max30102):    i2c_Stop();
+Max30102.c (source code\hardware\max30102):    i2c_Stop();
+Max30102.c (source code\hardware\max30102):    i2c_Stop();
+Max30102.c (source code\hardware\max30102):    i2c_Stop();
+Max30102.c (source code\hardware\max30102):    i2c_Stop();
+Max30102.c (source code\hardware\max30102):	i2c_Stop();
+Myiic.c (source code\hardware\max30102):	i2c_Stop();
+Myiic.c (source code\hardware\max30102):void i2c_Stop(void)
+Myiic.c (source code\hardware\max30102):		i2c_Stop();			/* 发送停止信号 */
+Myiic.h (source code\hardware\max30102):void i2c_Stop(void);

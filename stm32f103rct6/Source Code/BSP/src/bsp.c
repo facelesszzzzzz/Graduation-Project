@@ -21,7 +21,7 @@ static void BSP_IO_Init(void)
 	GPIO_PinInit(GPIO_PB12, GPIO_Mode_Out_PP);		/* OLED SDA */
 	GPIO_PinInit(GPIO_PB13, GPIO_Mode_Out_PP);		/* OLED SCK */
 	
-	GPIO_PinInit(GPIO_PC1, GPIO_Mode_Out_OD);		/* MAX30102 SCL */
+	GPIO_PinInit(GPIO_PC5, GPIO_Mode_Out_OD);		/* MAX30102 SCL */
 	GPIO_PinInit(GPIO_PC4, GPIO_Mode_Out_OD);		/* MAX30102 SDA */
 
 //	GPIO_PinInit(GPIO_PE5, GPIO_Mode_Out_PP);
