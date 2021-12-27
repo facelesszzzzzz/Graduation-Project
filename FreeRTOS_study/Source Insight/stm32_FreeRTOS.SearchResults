@@ -1,0 +1,22 @@
+---- cJSON_malloc Matches (21 in 1 files) ----
+cJSON.c (mqtt\src):static void *(*cJSON_malloc)(size_t sz) = pvPortMalloc;
+cJSON.c (mqtt\src):      if (!(copy = (char*)cJSON_malloc(len))) return 0;
+cJSON.c (mqtt\src):        cJSON_malloc = pvPortMalloc;
+cJSON.c (mqtt\src):	cJSON_malloc = (hooks->malloc_fn)?hooks->malloc_fn:pvPortMalloc;
+cJSON.c (mqtt\src):	cJSON* node = (cJSON*)cJSON_malloc(sizeof(cJSON));
+cJSON.c (mqtt\src):	newbuffer=(char*)cJSON_malloc(newsize);
+cJSON.c (mqtt\src):		else	str=(char*)cJSON_malloc(2);	/* special case for 0. */
+cJSON.c (mqtt\src):		else	str=(char*)cJSON_malloc(21);	/* 2^64+1 can be represented in 21 chars. */
+cJSON.c (mqtt\src):		else	str=(char*)cJSON_malloc(64);	/* This is a nice tradeoff. */
+cJSON.c (mqtt\src):	out=(char*)cJSON_malloc(len+1);	/* This is how long we need for the string, roughly. */
+cJSON.c (mqtt\src):		else		out=(char*)cJSON_malloc(len+3);
+cJSON.c (mqtt\src):		else	out=(char*)cJSON_malloc(3);
+cJSON.c (mqtt\src):	else	out=(char*)cJSON_malloc(len+3);
+cJSON.c (mqtt\src):	p.buffer=(char*)cJSON_malloc(prebuffer);
+cJSON.c (mqtt\src):		else	out=(char*)cJSON_malloc(3);
+cJSON.c (mqtt\src):		entries=(char**)cJSON_malloc(numentries*sizeof(char*));
+cJSON.c (mqtt\src):		if (!fail)	out=(char*)cJSON_malloc(len);
+cJSON.c (mqtt\src):		else	out=(char*)cJSON_malloc(fmt?depth+4:3);
+cJSON.c (mqtt\src):		entries=(char**)cJSON_malloc(numentries*sizeof(char*));
+cJSON.c (mqtt\src):		names=(char**)cJSON_malloc(numentries*sizeof(char*));
+cJSON.c (mqtt\src):		if (!fail)	out=(char*)cJSON_malloc(len);
