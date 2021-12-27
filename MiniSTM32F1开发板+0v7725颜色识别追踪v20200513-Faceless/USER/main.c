@@ -161,10 +161,10 @@ int main(void)
 	TIM3_Int_Init(10000,7199);			//TIM3,10Khz计数频率,1秒钟中断									  
 	EXTI15_Init();						//使能定时器捕获					 	 
  	LCD_Clear(BACK_COLOR);
-	POINT_COLOR=BLACK;
-	Show_Str(5,5,200,24,"识别物质：",24,0);
-  Show_Str(5,29,200,24,"识别浓度：",24,0);
-	POINT_COLOR=RED;
+// 	POINT_COLOR=BLACK;
+// 	Show_Str(5,5,200,24,"识别物质：",24,0);
+//   Show_Str(5,29,200,24,"识别浓度：",24,0);
+// 	POINT_COLOR=RED;
 	while(1)
 	{	
 		if(sensor==OV7725)
@@ -212,11 +212,11 @@ int main(void)
 		// 	Show_Str(125,29,200,24,"0000",24,0);
 		// 	POINT_COLOR=RED;
 		// }
- 		if(i!=ov_frame)		//DS0闪烁.
-		{
-			i=ov_frame;
-			LED0=!LED0;
- 		}
+ 		// if(i!=ov_frame)		//DS0闪烁.
+		// {
+		// 	i=ov_frame;
+		// 	LED0=!LED0;
+ 		// }
 	}   
 }
 
