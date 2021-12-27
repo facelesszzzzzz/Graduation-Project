@@ -212,11 +212,13 @@ int main(void)
 		// 	Show_Str(125,29,200,24,"0000",24,0);
 		// 	POINT_COLOR=RED;
 		// }
+		
  		if(i!=ov_frame)		//DS0иак╦.
 		{
 			i=ov_frame;
 			LED0=!LED0;
  		}
+		 //hello
 	}   
 }
 
