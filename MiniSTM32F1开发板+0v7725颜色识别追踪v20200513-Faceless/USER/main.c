@@ -169,49 +169,49 @@ int main(void)
 	{	
 		if(sensor==OV7725)
 			OV7725_camera_refresh();//摄像头屏幕刷新
-		if(Trace(&condition0, &result))//识别绿色为氧化铜
-		{
-			POINT_COLOR=GREEN;
-			Show_Str(125,5,200,24,"氧化铜",24,0);//氧化铜
-			TU_Value_Conversion();		//浓度的AD转换获取	
-			Show_Str(125,29,200,24,Tx,24,0);//数据存到Tx数组
-			POINT_COLOR=RED;
-			delay_ms(500);
-		}
-		else if(Trace(&condition1, &result))//识别蓝色为硫酸铝
-		{
-			POINT_COLOR=BLUE;
-			Show_Str(125,5,200,24,"硫酸铝",24,0);//硫酸铝
-			TU_Value_Conversion();	
-			Show_Str(125,29,200,24,Tx,24,0);
-			POINT_COLOR=RED;
-			delay_ms(500);
-		}
-		else if(Trace(&condition8, &result))//识别红色为铁离子
-		{
-			POINT_COLOR=RED;
-			Show_Str(125,5,200,24,"铁离子",24,0);//铁离子
-			TU_Value_Conversion();	
-			Show_Str(125,29,200,24,Tx,24,0);
-			POINT_COLOR=RED;
-			delay_ms(500);
-		}
-		else if(Trace(&condition5, &result))//识别黄色为其他
-		{
-			POINT_COLOR=YELLOW;
-			Show_Str(125,5,200,24,"其他  ",24,0);//其他
-			TU_Value_Conversion();	
-			Show_Str(125,29,200,24,Tx,24,0);
-			POINT_COLOR=RED;
-			delay_ms(500);
-		}
-		else
-		{
-			POINT_COLOR=BLACK;
-			Show_Str(125,5,200,24,"未识别",24,0);//未识别
-			Show_Str(125,29,200,24,"0000",24,0);
-			POINT_COLOR=RED;
-		}
+		// if(Trace(&condition0, &result))//识别绿色为氧化铜
+		// {
+		// 	POINT_COLOR=GREEN;
+		// 	Show_Str(125,5,200,24,"氧化铜",24,0);//氧化铜
+		// 	TU_Value_Conversion();		//浓度的AD转换获取	
+		// 	Show_Str(125,29,200,24,Tx,24,0);//数据存到Tx数组
+		// 	POINT_COLOR=RED;
+		// 	delay_ms(500);
+		// }
+		// else if(Trace(&condition1, &result))//识别蓝色为硫酸铝
+		// {
+		// 	POINT_COLOR=BLUE;
+		// 	Show_Str(125,5,200,24,"硫酸铝",24,0);//硫酸铝
+		// 	TU_Value_Conversion();	
+		// 	Show_Str(125,29,200,24,Tx,24,0);
+		// 	POINT_COLOR=RED;
+		// 	delay_ms(500);
+		// }
+		// else if(Trace(&condition8, &result))//识别红色为铁离子
+		// {
+		// 	POINT_COLOR=RED;
+		// 	Show_Str(125,5,200,24,"铁离子",24,0);//铁离子
+		// 	TU_Value_Conversion();	
+		// 	Show_Str(125,29,200,24,Tx,24,0);
+		// 	POINT_COLOR=RED;
+		// 	delay_ms(500);
+		// }
+		// else if(Trace(&condition5, &result))//识别黄色为其他
+		// {
+		// 	POINT_COLOR=YELLOW;
+		// 	Show_Str(125,5,200,24,"其他  ",24,0);//其他
+		// 	TU_Value_Conversion();	
+		// 	Show_Str(125,29,200,24,Tx,24,0);
+		// 	POINT_COLOR=RED;
+		// 	delay_ms(500);
+		// }
+		// else
+		// {
+		// 	POINT_COLOR=BLACK;
+		// 	Show_Str(125,5,200,24,"未识别",24,0);//未识别
+		// 	Show_Str(125,29,200,24,"0000",24,0);
+		// 	POINT_COLOR=RED;
+		// }
  		if(i!=ov_frame)		//DS0闪烁.
 		{
 			i=ov_frame;
