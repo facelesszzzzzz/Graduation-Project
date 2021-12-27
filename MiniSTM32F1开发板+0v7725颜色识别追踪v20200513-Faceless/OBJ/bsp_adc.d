@@ -2,7 +2,7 @@
 ..\obj\bsp_adc.o: ..\HARDWARE\ADC\bsp_adc.h
 ..\obj\bsp_adc.o: ..\USER\stm32f10x.h
 ..\obj\bsp_adc.o: ..\CORE\core_cm3.h
-..\obj\bsp_adc.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\bsp_adc.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\bsp_adc.o: ..\USER\system_stm32f10x.h
 ..\obj\bsp_adc.o: ..\USER\stm32f10x_conf.h
 ..\obj\bsp_adc.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h

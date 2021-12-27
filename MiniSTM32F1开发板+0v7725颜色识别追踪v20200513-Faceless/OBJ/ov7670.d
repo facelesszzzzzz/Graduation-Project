@@ -2,7 +2,7 @@
 ..\obj\ov7670.o: ..\SYSTEM\sys\sys.h
 ..\obj\ov7670.o: ..\USER\stm32f10x.h
 ..\obj\ov7670.o: ..\CORE\core_cm3.h
-..\obj\ov7670.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\ov7670.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\ov7670.o: ..\USER\system_stm32f10x.h
 ..\obj\ov7670.o: ..\USER\stm32f10x_conf.h
 ..\obj\ov7670.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -35,5 +35,5 @@
 ..\obj\ov7670.o: ..\HARDWARE\TIMER\timer.h
 ..\obj\ov7670.o: ..\SYSTEM\delay\delay.h
 ..\obj\ov7670.o: ..\SYSTEM\usart\usart.h
-..\obj\ov7670.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\ov7670.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\ov7670.o: ..\HARDWARE\EXTI\exti.h

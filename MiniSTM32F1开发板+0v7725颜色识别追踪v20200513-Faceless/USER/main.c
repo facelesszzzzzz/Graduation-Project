@@ -29,12 +29,23 @@
 
 //由于OV7725传感器安装方式原因,OV7725_WINDOW_WIDTH相当于LCD的高度，OV7725_WINDOW_HEIGHT相当于LCD的宽度
 //注意：此宏定义只对OV7725有效
-#define  OV7725_WINDOW_WIDTH		260 // <=320
-#define  OV7725_WINDOW_HEIGHT		240 // <=240
+#define  OV7725_WINDOW_WIDTH		40 // <=320
+#define  OV7725_WINDOW_HEIGHT		40 // <=240
 
 extern u8 ov_sta;	//在exit.c里面定义
 extern u8 ov_frame;	//在timer.c里面定义
 extern volatile uint8_t Ov7725_Vsync;
+void Send_Pic_Div(u16 color)
+{
+		u8 temp;		 
+		temp = color&0x00ff;						//低八位
+		USART_SendData(USART1,temp);
+		while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
+	
+		temp = color>>8;								//高八位
+		USART_SendData(USART1,temp);
+		while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
+}
 
 
 //更新LCD显示(OV7725)
@@ -72,6 +83,7 @@ void OV7725_camera_refresh(void)
 				OV7725_RCK=1;
 				GPIOB->CRL=0X33333333;
 				LCD_WR_DATA(color); 
+				Send_Pic_Div(color);
 			}
 		}
 		OV7725_CS=1;
@@ -118,6 +130,7 @@ int main(void)
 {	
 	u8 sensor=0;
 	u8 i;	
+	u16 color = 0x1111;
 	delay_init();	    	 //延时函数初始化
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);// 设置中断优先级分组2
 	uart_init(115200);
@@ -161,14 +174,15 @@ int main(void)
 	TIM3_Int_Init(10000,7199);			//TIM3,10Khz计数频率,1秒钟中断									  
 	EXTI15_Init();						//使能定时器捕获					 	 
  	LCD_Clear(BACK_COLOR);
-	POINT_COLOR=BLACK;
-	Show_Str(5,5,200,24,"识别物质：",24,0);
-  Show_Str(5,29,200,24,"识别浓度：",24,0);
-	POINT_COLOR=RED;
+	// POINT_COLOR=BLACK;
+	// Show_Str(5,5,200,24,"识别物质：",24,0);
+ 	// Show_Str(5,29,200,24,"识别浓度：",24,0);
+	// POINT_COLOR=RED;
 	while(1)
 	{	
 		if(sensor==OV7725)
 			OV7725_camera_refresh();//摄像头屏幕刷新
+		while(1);
 		if(Trace(&condition0, &result))//识别绿色为氧化铜
 		{
 			POINT_COLOR=GREEN;
