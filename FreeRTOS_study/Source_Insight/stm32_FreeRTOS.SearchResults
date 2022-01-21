@@ -1,0 +1,5 @@
+---- BEEP_ON Matches (4 in 3 files) ----
+Beep.h (hardware\beep)://#define BEEP_ON                 GPIO_ResetBits(BEEP_GPIO,BEEP_GPIO_IO)
+Beep.h (hardware\beep):    Beep_On,
+Dht22.c (hardware\dht22):        BEEP_ON;
+Oled.c (hardware\oled)://		BEEP_ON;
