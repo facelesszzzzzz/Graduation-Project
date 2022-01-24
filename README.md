@@ -2,7 +2,8 @@
 
 This is Faceless's Code-Repository.
 
-
+Cradle_V0.02:
+	1、逻辑功能优化，通信部分完善
 Cradle_V0.01:
     1、增加.gitignore对OBJ中的编译文件屏蔽上传
 	2、大体功能逻辑基本完善，剩下通信部分未完善

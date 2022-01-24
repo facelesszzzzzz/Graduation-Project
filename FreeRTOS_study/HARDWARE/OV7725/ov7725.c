@@ -323,12 +323,12 @@ void Send_Pic_Div(u16 color)
 {
 	u8 temp;		 
 	temp = color&0x00ff;						//µÍ°ËÎ»
-	USART_SendData(USART1,temp);
-	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
+	USART_SendData(USART3,temp);
+	while(USART_GetFlagStatus(USART3,USART_FLAG_TC) != SET);
 
 	temp = color>>8;								//¸ß°ËÎ»
-	USART_SendData(USART1,temp);
-	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
+	USART_SendData(USART3,temp);
+	while(USART_GetFlagStatus(USART3,USART_FLAG_TC) != SET);
 }
 
 

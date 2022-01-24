@@ -169,6 +169,12 @@ void RH_Tem_U32toString(u32 RH,u32 Tem)
 	}
 }
 
+
+DHT22_t *Get_Dht22Value(void)
+{
+    return pDHT22;
+}
+
 /**********************************************************************
 * 函数名称：DHT22_Read_Data
 * 功能描述：DHT22读取一次数据
@@ -196,8 +202,8 @@ u8 DHT22_Read_Data()
 			pDHT22->Tem_Value = DHT22_Tem2Ten(buf[2],buf[3]);	                    //温度数据转换整型数字量
 //			DHT22_LIMIT(gState);
 			RH_Tem_U32toString(pDHT22->RH_Value,pDHT22->Tem_Value);							//将温湿度整型数据转换成字符串数据	
-			OLED_ShowString(20, 4, pDHT22->RH_Str, 16);
-			OLED_ShowString(84, 4, pDHT22->Tem_Str, 16);
+//			OLED_ShowString(20, 4, pDHT22->RH_Str, 16);
+//			OLED_ShowString(84, 4, pDHT22->Tem_Str, 16);
 			return 0;
 		}
 	}

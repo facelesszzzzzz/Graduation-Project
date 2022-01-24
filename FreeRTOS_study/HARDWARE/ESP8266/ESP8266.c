@@ -50,11 +50,15 @@ void ESP8266_Task(void *pvParameters)
         }else
             lBlockTime = portMAX_DELAY;
 
-        
+        /* 接收app数据 */
         if(ESP8266_Queue_Handle != NULL){
             if(xQueueReceive(ESP8266_Queue_Handle, lBuf, lBlockTime)){
                 if(strstr(lBuf, "OK") && lNum < ESP8266_CMD_LEN){
                     lNum++;
+                }else if(strstr(lBuf, "Look")){
+                    /* 开启拍照模式 */
+                    if(ESP8266_EventGroup_Handle != NULL)
+                        xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_LOOK_BIT);
                 }
             }
         }

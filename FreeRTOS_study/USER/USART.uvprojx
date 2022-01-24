@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\FreeRTOS\portable\RVDS\ARM_CM3;..\FreeRTOS\include;..\HARDWARE\BEEP;..\HARDWARE\LCD;..\HARDWARE\TIMER;..\MQTT\src;..\MALLOC;..\HARDWARE\ESP8266;..\SYSTEM;..\HARDWARE\OLED;..\HARDWARE\DHT22;..\HARDWARE\DY-SV17F;..\HARDWARE\OV7725</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\FreeRTOS\portable\RVDS\ARM_CM3;..\FreeRTOS\include;..\HARDWARE\BEEP;..\HARDWARE\LCD;..\HARDWARE\TIMER;..\MQTT\src;..\MALLOC;..\HARDWARE\ESP8266;..\SYSTEM;..\HARDWARE\OLED;..\HARDWARE\DHT22;..\HARDWARE\DY-SV17F;..\HARDWARE\OV7725;..\HARDWARE\EXTI</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
