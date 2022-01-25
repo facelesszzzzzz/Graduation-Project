@@ -213,7 +213,7 @@ void usart3_init(u32 bound)
 
 	//设置中断优先级
 	NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=6;//抢占优先级1
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=5;//抢占优先级1
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		//子优先级3
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化VIC寄存器
@@ -276,7 +276,7 @@ void USART3_IRQHandler(void)
 
 	if(ESP8266_Queue_Handle != NULL && (USART3_RX_STA & 0x8000)){
 		xQueueSendFromISR(ESP8266_Queue_Handle, USART3_RX_BUF, &xHigherPriorityTaskWoken);
-		USART3_RX_STA=0;	
+		USART3_RX_STA=0;
 		memset(USART3_RX_BUF,0,USART3_MAX_RECV_LEN);//清除数据接收缓冲区USART_RX_BUF,用于下一次数据接收
 		if(pdTRUE == xHigherPriorityTaskWoken)
 		{

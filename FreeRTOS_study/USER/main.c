@@ -45,16 +45,20 @@ void MainRunning_Task(void *pvParameters)
     uint8_t lSoundState = VOICE_DISABLE;
     DHT22_t *pDht22Send = (DHT22_t *)pvPortMalloc(sizeof(DHT22_t)); 
     EventBits_t lBitState;
+	EventBits_t lBit = 0;
+//	printf("MainRunning_Task!\r\n");
     /* 等待连上服务器 */
-    while(pdTRUE == xEventGroupWaitBits((EventGroupHandle_t) ESP8266_EventGroup_Handle,
-                                        (EventBits_t) ESP8266_CONNECT_BIT,
-                                        (BaseType_t) pdTRUE,
-                                        (BaseType_t) pdFALSE,
-                                        (TickType_t) portMAX_DELAY));
+    xEventGroupWaitBits((EventGroupHandle_t) ESP8266_EventGroup_Handle,
+                        (EventBits_t) ESP8266_CONNECT_BIT,
+                        (BaseType_t) pdTRUE,
+                        (BaseType_t) pdFALSE,
+                        (TickType_t) portMAX_DELAY);
+
+	OLED_Clear();
     while(1)
     {
         /* 按键处理 */
-        switch(KEY_Scan(1))
+        switch(KEY_Scan(0))
         {
             case KEY0_PRES:
                 /* 模式切换 */
@@ -148,7 +152,7 @@ int main (void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);//设置NVIC中断分组4位抢占优先级
 	delay_init();
 	OLED_Init();
-	uart_init(115200);	        //串口初始化为115200
+//	uart_init(115200);	        //串口初始化为115200
     usart3_init(115200);
 	KEY_Init();                 //初始化与按键连接的硬件接口
 	BEEP_Init();

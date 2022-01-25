@@ -7,6 +7,9 @@ Cradle_V0.02:
 Cradle_V0.01:
     1、增加.gitignore对OBJ中的编译文件屏蔽上传
 	2、大体功能逻辑基本完善，剩下通信部分未完善
+Cradle_V0.02: 
+	1、通信部分优化，调试功能完善
+	2、串口3接收数据跟发送的数据重叠，待解决！
 
 his:
 v0.1: The New Contents:
