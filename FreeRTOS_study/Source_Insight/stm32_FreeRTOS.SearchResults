@@ -1,14 +1,19 @@
----- ESP8266_Queue_Handle Matches (13 in 4 files) ----
-ESP8266.c (hardware\esp8266):QueueHandle_t ESP8266_Queue_Handle;
-ESP8266.c (hardware\esp8266):        if(ESP8266_Queue_Handle != NULL){
-ESP8266.c (hardware\esp8266):            if(xQueueReceive(ESP8266_Queue_Handle, lBuf, lBlockTime)){
-ESP8266.c (hardware\esp8266):    ESP8266_Queue_Handle = xQueueCreate(1, ESP8266_QUEUE_LEN);
-Main.c (user)://   	ESP8266_Queue_Handle = xQueueCreate(1, ESP8266_QUEUE_LEN);
-Timer.c (hardware\timer):extern QueueHandle_t ESP8266_Queue_Handle;
-Timer.c (hardware\timer):		if(ESP8266_Queue_Handle != NULL && (USART3_RX_STA & 0x8000)){
-Timer.c (hardware\timer):			xQueueSendFromISR(ESP8266_Queue_Handle, USART3_RX_BUF, &xHigherPriorityTaskWoken);
-Usart.c (system\usart):extern QueueHandle_t ESP8266_Queue_Handle;
-Usart.c (system\usart)://	if(ESP8266_Queue_Handle != NULL && (USART_RX_STA & 0x8000)){
-Usart.c (system\usart)://		xQueueSendFromISR(ESP8266_Queue_Handle, USART_RX_BUF, &xHigherPriorityTaskWoken);
-Usart.c (system\usart):	if(ESP8266_Queue_Handle != NULL && (USART3_RX_STA & 0x8000)){
-Usart.c (system\usart):		xQueueSendFromISR(ESP8266_Queue_Handle, USART3_RX_BUF, &xHigherPriorityTaskWoken);
+---- OLED_ShowString Matches (18 in 5 files) ----
+Dht22.c (hardware\dht22)://			OLED_ShowString(20, 4, pDHT22->RH_Str, 16);
+Dht22.c (hardware\dht22)://			OLED_ShowString(84, 4, pDHT22->Tem_Str, 16);
+ESP8266.c (hardware\esp8266):            OLED_ShowString(0, lY, (u8 *)pESP8266_Cmd[lNum], 16);
+Main.c (user):        OLED_ShowString(40, 0, "Cradle", 16);
+Main.c (user):        OLED_ShowString(0, 2, "Tem:", 16);
+Main.c (user):        OLED_ShowString(32, 2, pDht22_Show->Tem_Str, 16);
+Main.c (user):        OLED_ShowString(0, 4, "RH:", 16);
+Main.c (user):        OLED_ShowString(24, 4, pDht22_Show->RH_Str, 16);
+Main.c (user):        OLED_ShowString(0, 6, pModeStr[lCurrentMode], 16);
+Main.c (user):    OLED_ShowString(0, 0, "Bsp_initialize", 16);
+Main.c (user):    OLED_ShowString(0, 2, "Voice_initialize", 16);
+Main.c (user):    OLED_ShowString(0, 4, "DHT22_Initialize", 16);
+Main.c (user):    OLED_ShowString(0, 6, "OV7725_Initialize", 16);
+Oled.c (hardware\oled):void OLED_ShowString(u8 x,u8 y,u8 *chr,u8 Char_Size)
+Oled.c (hardware\oled)://	OLED_ShowString(20, 3, pData_Show->HeartRate, 16);
+Oled.c (hardware\oled)://	OLED_ShowString(20, 6, pData_Show->Spo2, 16);
+Oled.c (hardware\oled)://	OLED_ShowString(48, 0, pData_Show->BodyTemp, 16);
+Oled.h (hardware\oled):void OLED_ShowString(u8 x,u8 y, u8 *p,u8 Char_Size);	 

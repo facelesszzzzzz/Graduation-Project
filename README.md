@@ -2,6 +2,8 @@
 
 This is Faceless's Code-Repository.
 
+Cradle_V0.05:
+	1、调试完毕，等待APP联调
 Cradle_V0.04:
 	1、通信部分分发送和接收两个任务来运行，系统运行自己一个任务
 	2、等待重新调试

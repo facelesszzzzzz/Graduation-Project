@@ -15,8 +15,8 @@ typedef struct
 {
     uint32_t RH_Value;
     uint32_t Tem_Value;
-    uint8_t RH_Str[4];
-    uint8_t Tem_Str[4];
+    uint8_t RH_Str[5];
+    uint8_t Tem_Str[5];
 }DHT22_t;
 
 

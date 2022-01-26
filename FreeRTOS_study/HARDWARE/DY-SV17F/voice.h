@@ -5,14 +5,14 @@
 typedef enum
 {
     Voice_none = 0,
-    Voice_one,
-    Voice_two,
-    Voice_three,
-    Voice_four,
-    Voice_five,
-    Voice_six,
-    Voice_seven,
-    Voice_eight
+    Voice_one = 1,
+    Voice_two = 2,
+    Voice_three = 4,
+    Voice_four = 8,
+    Voice_five = 16,
+    Voice_six = 32,
+    Voice_seven = 64,
+    Voice_eight = 128
 }VOICE_Song_e;
 
 #define VOICE_ENABLE                1

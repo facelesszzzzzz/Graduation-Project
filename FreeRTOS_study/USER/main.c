@@ -43,6 +43,7 @@ void MainRunning_Task(void *pvParameters)
     uint8_t *pModeStr[] = {"Mode:Default","Mode:Care   "};
     uint8_t lSoundCount = 0;
     uint8_t lSoundState = VOICE_DISABLE;
+	uint8_t lSoundSelect = 0;
     DHT22_t *pDht22_Show = (DHT22_t *)pvPortMalloc(sizeof(DHT22_t)); 
 //	printf("MainRunning_Task!\r\n");
     /* 等待连上服务器 */
@@ -71,7 +72,25 @@ void MainRunning_Task(void *pvParameters)
                 break;
             case WKUP_PRES:
                 lCurrentMode = DEFAULT_MODE;
-//                VOICE_Select(Voice_none);
+				lSoundSelect++;
+				if(1 == lSoundSelect){
+					/* 无声 */
+					VOICE_Select(Voice_three);
+					vTaskDelay(1000);
+					VOICE_Select(Voice_none);
+				}else if(2 == lSoundSelect){
+					/* 小星星 */
+					VOICE_Select(Voice_one);
+					vTaskDelay(1000);
+					VOICE_Select(Voice_none);
+				}else if(3 == lSoundSelect){
+					/* 两只老虎 */
+					VOICE_Select(Voice_two);
+					vTaskDelay(1000);
+					VOICE_Select(Voice_none);
+					lSoundSelect= 0;
+				}
+
                 break;
             default:
                 break;
@@ -83,13 +102,16 @@ void MainRunning_Task(void *pvParameters)
             case DEFAULT_MODE:
                 break;
             case CARE_MODE:
+				lSoundSelect = 0;
                 DHT22_LIMIT();
                 if(SOUND_READ){
                     lSoundCount++;
-                    if(lSoundCount > 5 && VOICE_DISABLE == lSoundState){
+                    if(lSoundCount > 3 && VOICE_DISABLE == lSoundState){
                         lSoundState = VOICE_ENABLE;
                         /* 检测到哭啼声 */
                         VOICE_Select(Voice_one);
+						vTaskDelay(1000);
+						VOICE_Select(Voice_none);
                     }
                 }else{
                     lSoundState = VOICE_DISABLE;
@@ -105,9 +127,9 @@ void MainRunning_Task(void *pvParameters)
         /* OLED内容显示 */
         OLED_ShowString(40, 0, "Cradle", 16);
         OLED_ShowString(0, 2, "Tem:", 16);
-        OLED_ShowString(64, 2, pDht22_Show->Tem_Str, 16);
+        OLED_ShowString(32, 2, pDht22_Show->Tem_Str, 16);
         OLED_ShowString(0, 4, "RH:", 16);
-        OLED_ShowString(48, 4, pDht22_Show->RH_Str, 16);
+        OLED_ShowString(24, 4, pDht22_Show->RH_Str, 16);
         OLED_ShowString(0, 6, pModeStr[lCurrentMode], 16);
         vTaskDelay(10);
     }

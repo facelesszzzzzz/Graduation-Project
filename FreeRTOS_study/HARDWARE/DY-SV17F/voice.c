@@ -1,6 +1,7 @@
 #include "voice.h"
 //#include "usart2.h"
 #include <string.h>
+#include "delay.h"
 
 #ifdef VOICE_UART
 typedef struct
@@ -102,6 +103,14 @@ void VOICE_Init(void)
  	GPIO_Init(GPIOC, &GPIO_InitStructure);							                        //使能GIPO口
 //	VOICE_Mode();															                //配置语音模块工作模式
 	VOICE_Select(Voice_none);
+//	GPIO_ResetBits(GPIOA, GPIO_Pin_3);
+//	GPIO_SetBits(GPIOA, GPIO_Pin_2);
+//	GPIO_SetBits(GPIOC, GPIO_Pin_3);
+//	GPIO_SetBits(GPIOC, GPIO_Pin_2);
+//	GPIO_SetBits(GPIOC, GPIO_Pin_1);
+//	GPIO_SetBits(GPIOC, GPIO_Pin_0);
+//	GPIO_SetBits(GPIOA, GPIO_Pin_7);
+//	GPIO_SetBits(GPIOA, GPIO_Pin_6);
 }
 
 
