@@ -152,6 +152,8 @@ u32 DHT22_Tem2Ten(u8 Tem_data_H, u8 Tem_data_L)
 void RH_Tem_U32toString(u32 RH,u32 Tem)
 {
 	u8 i = 4;
+    strcpy((char *)pDHT22->RH_Str,"00.0");
+    strcpy((char *)pDHT22->Tem_Str,"00.0");
 	while(i)
 	{	
 		i--;
@@ -162,8 +164,6 @@ void RH_Tem_U32toString(u32 RH,u32 Tem)
 		//将数据从最低位往前存入字符串
 		pDHT22->RH_Str[i] = RH % 10 + 0x30;
 		pDHT22->Tem_Str[i] = Tem % 10 + 0x30;
-//		send_Tem[i+4] = dht22_Tem_str[i];
-//		send_RH[i+3] = dht22_RH_str[i];
 		RH /= 10;
 		Tem /= 10;
 	}

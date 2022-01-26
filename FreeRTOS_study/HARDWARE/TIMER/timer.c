@@ -198,7 +198,9 @@ void TIM7_IRQHandler(void)
 { 	
 	BaseType_t xHigherPriorityTaskWoken;
 	if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)//是更新中断
-	{	 			   
+	{	 			
+	    TIM_ClearITPendingBit(TIM7, TIM_IT_Update  );  //清除TIM7更新中断标志    
+		TIM_Cmd(TIM7, DISABLE);  //关闭TIM7 
 		USART3_RX_STA|=0x8000;	//标记接收完成
 		
 		if(ESP8266_Queue_Handle != NULL && (USART3_RX_STA & 0x8000)){
@@ -210,8 +212,6 @@ void TIM7_IRQHandler(void)
 				portYIELD_FROM_ISR(xHigherPriorityTaskWoken);//如果需要的话进行一次任务切换
 			}
 		}
-		TIM_ClearITPendingBit(TIM7, TIM_IT_Update  );  //清除TIM7更新中断标志    
-		TIM_Cmd(TIM7, DISABLE);  //关闭TIM7 
 	}	    
 }
 

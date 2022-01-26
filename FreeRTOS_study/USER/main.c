@@ -40,12 +40,10 @@ void Timer_Count_Task(TimerHandle_t pxTimer)
 void MainRunning_Task(void *pvParameters)
 {
     uint8_t lCurrentMode = DEFAULT_MODE;
-    uint8_t *pModeStr[] = {"Mode:Default","Mode:Care"};
+    uint8_t *pModeStr[] = {"Mode:Default","Mode:Care   "};
     uint8_t lSoundCount = 0;
     uint8_t lSoundState = VOICE_DISABLE;
-    DHT22_t *pDht22Send = (DHT22_t *)pvPortMalloc(sizeof(DHT22_t)); 
-    EventBits_t lBitState;
-	EventBits_t lBit = 0;
+    DHT22_t *pDht22_Show = (DHT22_t *)pvPortMalloc(sizeof(DHT22_t)); 
 //	printf("MainRunning_Task!\r\n");
     /* 等待连上服务器 */
     xEventGroupWaitBits((EventGroupHandle_t) ESP8266_EventGroup_Handle,
@@ -103,20 +101,13 @@ void MainRunning_Task(void *pvParameters)
                 break;
         }
         BEEP_Handle();
-        pDht22Send = Get_Dht22Value();
-        lBitState = xEventGroupGetBits(ESP8266_EventGroup_Handle);
-        /* 发送数据给app */
-        if(lBitState == ESP8266_LOOK_BIT){
-            u3_printf("LookSuccess");
-            vTaskDelay(1000);
-            OV7725_camera_refresh();
-        }
-        else
-            u3_printf("Tem:%d,RH:%d",pDht22Send->Tem_Value, pDht22Send->RH_Value);
+        pDht22_Show = Get_Dht22Value();
         /* OLED内容显示 */
         OLED_ShowString(40, 0, "Cradle", 16);
-        OLED_ShowString(0, 2, pDht22Send->Tem_Str, 16);
-        OLED_ShowString(0, 4, pDht22Send->RH_Str, 16);
+        OLED_ShowString(0, 2, "Tem:", 16);
+        OLED_ShowString(64, 2, pDht22_Show->Tem_Str, 16);
+        OLED_ShowString(0, 4, "RH:", 16);
+        OLED_ShowString(48, 4, pDht22_Show->RH_Str, 16);
         OLED_ShowString(0, 6, pModeStr[lCurrentMode], 16);
         vTaskDelay(10);
     }

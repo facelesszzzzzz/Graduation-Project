@@ -8,14 +8,20 @@
 #include <string.h>
 #include "event_groups.h"
 #include "delay.h"
+#include "dht22.h"
+#include "ov7725.h"
 
 #define ESP8266_STACK_LENGTH			1024
 #define ESP8266_CMD_LEN                 6
 #define ESP8266_QUEUE_LEN               USART3_MAX_RECV_LEN
 
+#define SEND_STACK_LENGTH			    128
+
 TaskHandle_t ESP8266_Handle;
 QueueHandle_t ESP8266_Queue_Handle;
 EventGroupHandle_t ESP8266_EventGroup_Handle;
+
+TaskHandle_t SEND_Handle;
 
 const char *pESP8266_Cmd[ESP8266_CMD_LEN] = 
 {
@@ -26,42 +32,70 @@ const char *pESP8266_Cmd[ESP8266_CMD_LEN] =
 	"AT+CIPMODE=1\r\n",
 	"AT+CIPSEND\r\n"
 };
-
-void ESP8266_Task(void *pvParameters)
+uint8_t lNum;
+void Send_Task(void *pvParameters)
 {
-    uint8_t lNum = 0,lY;
-    uint8_t lBuf[USART3_MAX_RECV_LEN];
-    uint32_t lBlockTime;
-	uint8_t lSendBusy = 0;
+    uint8_t lY;
+    EventBits_t lBitState;
+    DHT22_t *pDht22Send = (DHT22_t *)pvPortMalloc(sizeof(DHT22_t));;
+    vTaskDelay(3000);
     while(1)
     {
-        if(lNum < ESP8266_CMD_LEN && lSendBusy == 0){
+        lBitState= xEventGroupGetBits(ESP8266_EventGroup_Handle);
+        /* 已连接WIFI,进行TCP的连接 */
+        if(ESP8266_GOT_IP_BIT == lBitState){
+            lNum = 2;
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_GOT_IP_BIT);
+        }
+        /* 配置ESP8266指令并显示在OLED上 */
+        if(lNum < ESP8266_CMD_LEN){
             u3_printf("%s", pESP8266_Cmd[lNum]);
             lY = lNum >= 4 ? (lNum-4)*2 : lNum*2;
             OLED_ShowString(0, lY, (u8 *)pESP8266_Cmd[lNum], 16);
-            lBlockTime = 1000/portTICK_PERIOD_MS;
+            vTaskDelay(2000);
         }else if(lNum == ESP8266_CMD_LEN){
+            /* 配置完毕,进行主界面显示 */
             lNum++;
-            lBlockTime = portMAX_DELAY;
             if(ESP8266_EventGroup_Handle != NULL){
                 xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_CONNECT_BIT);
             }
             vTaskDelay(2000);
-        }else
-            lBlockTime = portMAX_DELAY;
+        }else{
+            /* 发送数据给app */
+            if(lBitState == ESP8266_LOOK_BIT){
+                u3_printf("LookSuccess");
+                xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_LOOK_BIT);
+                vTaskDelay(1000);
+                OV7725_camera_refresh();
+            }
+            else{
+                pDht22Send = Get_Dht22Value();
+                u3_printf("Tem:%d,RH:%d",pDht22Send->Tem_Value, pDht22Send->RH_Value);
+            }
+            vTaskDelay(500);
+        }
+    
+    }
+}
+
+void ESP8266_Task(void *pvParameters)
+{
+    char lBuf[USART3_MAX_RECV_LEN];
+    while(1)
+    {
         /* 接收app数据 */
         if(ESP8266_Queue_Handle != NULL){
 			memset(lBuf, 0x00, USART3_MAX_RECV_LEN);
-            if(xQueueReceive(ESP8266_Queue_Handle, lBuf, lBlockTime)){
-				if(lNum < ESP8266_CMD_LEN){
+            if(xQueueReceive(ESP8266_Queue_Handle, lBuf, portMAX_DELAY)){
+
+                if(strstr(lBuf, "GOT IP") && lNum == 0){
+                    if(ESP8266_EventGroup_Handle != NULL)
+                        xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_GOT_IP_BIT);
+                }
+				else if(lNum < ESP8266_CMD_LEN){
 					if(strstr(lBuf, "OK")){
                     	lNum++;
-						lSendBusy = 0;
-	                }else if(strstr(lBuf, "busy")){
-	                	lSendBusy++;
-	                }else if(strstr(lBuf, "FAIL")){
-						lSendBusy = 0;
-					}
+	                }
 				}
 				else{
 	                if(strstr(lBuf, "Look")){
@@ -72,12 +106,6 @@ void ESP8266_Task(void *pvParameters)
 				}
             }
         }
-		if(lSendBusy > 0){
-			lSendBusy++;
-			if(lSendBusy >= 5)
-				lSendBusy = 0;
-			vTaskDelay(1000);
-		}
     }
 }
 
@@ -92,4 +120,10 @@ void ESP8266_Task_Init(void)
 				(void *) NULL,
 				(UBaseType_t) ESP8266_PRIORITY,
 				(TaskHandle_t *) &ESP8266_Handle);
+    xTaskCreate((TaskFunction_t) Send_Task,
+				(const char * ) "Send_Task",
+				SEND_STACK_LENGTH,
+				(void *) NULL,
+				(UBaseType_t) SEND_PRIORITY,
+				(TaskHandle_t *) &SEND_Handle);
 }

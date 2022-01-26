@@ -3,6 +3,7 @@
 
 #define ESP8266_CONNECT_BIT     EVENT_GROUP_BIT(0)  
 #define ESP8266_LOOK_BIT        EVENT_GROUP_BIT(1)
+#define ESP8266_GOT_IP_BIT      EVENT_GROUP_BIT(2)
 
 void ESP8266_Task_Init(void);
 
