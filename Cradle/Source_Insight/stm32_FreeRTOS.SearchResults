@@ -1,0 +1,2 @@
+---- SendEventGroup Matches (1 in 1 files) ----
+Main.c (user)://   	SendEventGroup(ESP8266_EventGroup_Handle, 0xFF);

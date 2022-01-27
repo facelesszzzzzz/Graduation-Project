@@ -65,12 +65,13 @@ void Send_Task(void *pvParameters)
             if(lBitState == ESP8266_LOOK_BIT){
                 u3_printf("LookSuccess");
                 xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_LOOK_BIT);
+                /* 摄像头数据太长，需要延时后再发送 */
                 vTaskDelay(1000);
                 OV7725_camera_refresh();
             }
             else{
                 pDht22Send = Get_Dht22Value();
-                u3_printf("Tem:%d,RH:%d",pDht22Send->Tem_Value, pDht22Send->RH_Value);
+                u3_printf("Tem:%s,RH:%s",pDht22Send->Tem_Str, pDht22Send->RH_Str);
             }
             vTaskDelay(500);
         }

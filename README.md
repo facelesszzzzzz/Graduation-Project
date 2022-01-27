@@ -2,6 +2,9 @@
 
 This is Faceless's Code-Repository.
 
+Cradle_V0.06:
+	1、添加代码注释
+	2、重命名文件名，删除原有的readme.txt文件
 Cradle_V0.05:
 	1、调试完毕，等待APP联调
 Cradle_V0.04:

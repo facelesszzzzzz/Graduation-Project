@@ -45,7 +45,6 @@ void MainRunning_Task(void *pvParameters)
     uint8_t lSoundState = VOICE_DISABLE;
 	uint8_t lSoundSelect = 0;
     DHT22_t *pDht22_Show = (DHT22_t *)pvPortMalloc(sizeof(DHT22_t)); 
-//	printf("MainRunning_Task!\r\n");
     /* 等待连上服务器 */
     xEventGroupWaitBits((EventGroupHandle_t) ESP8266_EventGroup_Handle,
                         (EventBits_t) ESP8266_CONNECT_BIT,
@@ -64,6 +63,7 @@ void MainRunning_Task(void *pvParameters)
                 lCurrentMode = lCurrentMode == DEFAULT_MODE ? CARE_MODE : DEFAULT_MODE;
                 break;
             case KEY1_PRES:
+                /* 警报开关 */
                 lCurrentMode = DEFAULT_MODE;
                 if(Beep_On == Get_BeepState())
                     BEEP_Config(Beep_Off);
@@ -95,6 +95,7 @@ void MainRunning_Task(void *pvParameters)
             default:
                 break;
         }
+        /* 温湿度数据读取 */
         DHT22_Read_Data();  
         /* 模式处理 */
         switch(lCurrentMode)
@@ -103,12 +104,13 @@ void MainRunning_Task(void *pvParameters)
                 break;
             case CARE_MODE:
 				lSoundSelect = 0;
+                /* 湿度超限处理 */
                 DHT22_LIMIT();
                 if(SOUND_READ){
                     lSoundCount++;
+                    /* 检测到哭啼声 */
                     if(lSoundCount > 3 && VOICE_DISABLE == lSoundState){
                         lSoundState = VOICE_ENABLE;
-                        /* 检测到哭啼声 */
                         VOICE_Select(Voice_one);
 						vTaskDelay(1000);
 						VOICE_Select(Voice_none);
@@ -137,13 +139,11 @@ void MainRunning_Task(void *pvParameters)
 
 void Task_Init(void *pvParameters)
 {
-//	printf("Task Running\r\n");
 	taskENTER_CRITICAL();
     ESP8266_Task_Init();
 //   	ESP8266_Queue_Handle = xQueueCreate(1, ESP8266_QUEUE_LEN);
 //   	Message_Queue_Handle = xQueueCreate(1, ESP8266_QUEUE_LEN);
 //   	ESP8266_EventGroup_Handle = xEventGroupCreate();
-//   	SendEventGroup(ESP8266_EventGroup_Handle, 0xFF);
 //   	Timer_Count_Handle = xTimerCreate("TimerCount_Task",
 //   										1000,
 //   										pdTRUE,
@@ -162,25 +162,25 @@ void Task_Init(void *pvParameters)
 
 int main (void)
 {		 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);//设置NVIC中断分组4位抢占优先级
-	delay_init();
-	OLED_Init();
-//	uart_init(115200);	        //串口初始化为115200
-    usart3_init(115200);
-	KEY_Init();                 //初始化与按键连接的硬件接口
-	BEEP_Init();
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); //设置NVIC中断分组4位抢占优先级
+	delay_init();                                   //延时函数初始化
+	OLED_Init();                                    //Oled初始化
+//	uart_init(115200);	                            //串口初始化为115200
+    usart3_init(115200);                            //串口3初始化为115200
+	KEY_Init();                                     //初始化与按键连接的硬件接口
+	BEEP_Init();                                    //蜂鸣器初始化
     OLED_ShowString(0, 0, "Bsp_initialize", 16);
-	Sound_Init();
+	Sound_Init();                                   //声音传感器初始化
     OLED_ShowString(0, 2, "Voice_initialize", 16);
-    VOICE_Init();
+    VOICE_Init();                                   //音乐播放器初始化
     OLED_ShowString(0, 4, "DHT22_Initialize", 16);
-    while(DHT22_Init());
+    while(DHT22_Init());                            //温湿度传感器初始化
     OLED_ShowString(0, 6, "OV7725_Initialize", 16);
-    while(1)//初始化OV7725_OV7670
+    while(1)                                        //初始化OV7725_OV7670
 	{
 		if(OV7725_Init()==0)
 		{
-            OV7725_Configuration();			
+            OV7725_Configuration();	                //OV7725初始化摄像头参数配置		
 			delay_ms(1500);
 			break;
 		}
@@ -189,9 +189,9 @@ int main (void)
 			delay_ms(200);
 		}
 	} 	  							  
-	EXTI15_Init();							
+	EXTI15_Init();				                    //中断触发ov7725摄像头开启			
     delay_ms(2000);
-    OLED_Clear();
+    OLED_Clear();                                   //清屏
 	xTaskCreate((TaskFunction_t) Task_Init,
 				(const char * ) "Task_Init",
 				TASK_INIT_STACK_LENGTH,
