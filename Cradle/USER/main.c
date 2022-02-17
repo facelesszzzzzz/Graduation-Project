@@ -165,7 +165,7 @@ int main (void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); //设置NVIC中断分组4位抢占优先级
 	delay_init();                                   //延时函数初始化
 	OLED_Init();                                    //Oled初始化
-//	uart_init(115200);	                            //串口初始化为115200
+	uart_init(115200);	                            //串口初始化为115200
     usart3_init(115200);                            //串口3初始化为115200
 	KEY_Init();                                     //初始化与按键连接的硬件接口
 	BEEP_Init();                                    //蜂鸣器初始化
@@ -190,7 +190,7 @@ int main (void)
 		}
 	} 	  							  
 	EXTI15_Init();				                    //中断触发ov7725摄像头开启			
-    delay_ms(2000);
+    delay_ms(2000); 
     OLED_Clear();                                   //清屏
 	xTaskCreate((TaskFunction_t) Task_Init,
 				(const char * ) "Task_Init",

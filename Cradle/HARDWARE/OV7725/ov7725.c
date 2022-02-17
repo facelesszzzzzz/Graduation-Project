@@ -4,6 +4,9 @@
 #include "delay.h"
 #include "usart.h"			 
 #include "sccb.h"	
+#include "FreeRTOS.h"
+#include "event_groups.h"
+#include "ESP8266.h"
 //////////////////////////////////////////////////////////////////////////////////
 //ALIENTEK MiniSTM32开发板
 //OV7725 驱动代码	   
@@ -47,7 +50,7 @@ u8 OV7725_Init(void)
     
     /* D0~D7 */
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8;  
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
  	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);	//SWD
@@ -323,21 +326,32 @@ void Send_Pic_Div(u16 color)
 {
 	u8 temp;		 
 	temp = color&0x00ff;						//低八位
-	USART_SendData(USART3,temp);
-	while(USART_GetFlagStatus(USART3,USART_FLAG_TC) != SET);
+	USART_SendData(USART1,temp);
+	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
 
 	temp = color>>8;								//高八位
-	USART_SendData(USART3,temp);
-	while(USART_GetFlagStatus(USART3,USART_FLAG_TC) != SET);
+	USART_SendData(USART1,temp);
+	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);
 }
 
-
+extern EventGroupHandle_t ESP8266_EventGroup_Handle;
 //更新LCD显示(OV7725)
 void OV7725_camera_refresh(void)
 {
 	u32 i,j;
  	u16 color;
-	if(ov_sta==2)
+	EventBits_t lBit;
+//	if(ESP8266_EventGroup_Handle != NULL)
+//		xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_LOOK_RESET_BIT);
+//	printf("ready");
+//	lBit = xEventGroupWaitBits(ESP8266_EventGroup_Handle,
+//								ESP8266_LOOK_SET_BIT,
+//								pdFALSE,
+//								pdFALSE,
+//								portMAX_DELAY);
+//	printf("start");
+//	if((lBit&ESP8266_LOOK_SET_BIT) != 0)
+	if(ov_sta == 2)
 	{
 //		LCD_Scan_Dir(U2D_L2R);		//从上到下,从左到右 
 //		LCD_Set_Window(60,0,OV7725_WINDOW_WIDTH,OV7725_WINDOW_HEIGHT);
@@ -359,11 +373,13 @@ void OV7725_camera_refresh(void)
 			{
 //				GPIOB->CRL=0X88888888;
 				OV7725_RCK=0;
-				color=OV7725_DATA;	//读数据
+				color=(GPIOB->IDR&0x03)|((GPIOB->IDR&0x1F8)>>1);//OV7725_DATA;	//读数据
+				//color=OV7725_DATA;	//读数据
 				OV7725_RCK=1; 
 				color<<=8;  
 				OV7725_RCK=0;
-				color|=OV7725_DATA;	//读数据
+				color|=((GPIOB->IDR&0x03)|((GPIOB->IDR&0x1F8)>>1));	//读数据
+				//color|=OV7725_DATA;	//读数据
 				OV7725_RCK=1;
 //				GPIOB->CRL=0X33333333;
 //				LCD_WR_DATA(color); 
@@ -374,6 +390,7 @@ void OV7725_camera_refresh(void)
 		OV7725_RCK=0;
 		OV7725_RCK=1;
 		EXTI->PR=1<<15;
+//		xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_LOOK_RESET_BIT);
  		ov_sta=0;					//清零帧中断标记
 //		ov_frame++; 
 //		LCD_Scan_Dir(DFT_SCAN_DIR);	//恢复默认扫描方向 

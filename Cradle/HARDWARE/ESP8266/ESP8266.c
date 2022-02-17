@@ -28,7 +28,7 @@ const char *pESP8266_Cmd[ESP8266_CMD_LEN] =
 	"AT+CWMODE=1\r\n",
 	"AT+CWJAP=\"Facelesszzz\",\"05720041018\"\r\n",
 	"AT+CIPMUX=0\r\n",
-	"AT+CIPSTART=\"TCP\",\"172.20.10.2\",8900\r\n",
+	"AT+CIPSTART=\"TCP\",\"172.20.10.11\",8900\r\n",
 	"AT+CIPMODE=1\r\n",
 	"AT+CIPSEND\r\n"
 };
@@ -43,7 +43,7 @@ void Send_Task(void *pvParameters)
     {
         lBitState= xEventGroupGetBits(ESP8266_EventGroup_Handle);
         /* 已连接WIFI,进行TCP的连接 */
-        if(ESP8266_GOT_IP_BIT == lBitState){
+        if((lBitState&ESP8266_GOT_IP_BIT) != 0){
             lNum = 2;
             xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_GOT_IP_BIT);
         }
@@ -52,22 +52,25 @@ void Send_Task(void *pvParameters)
             u3_printf("%s", pESP8266_Cmd[lNum]);
             lY = lNum >= 4 ? (lNum-4)*2 : lNum*2;
             OLED_ShowString(0, lY, (u8 *)pESP8266_Cmd[lNum], 16);
-            vTaskDelay(2000);
+            vTaskDelay(1000);
         }else if(lNum == ESP8266_CMD_LEN){
             /* 配置完毕,进行主界面显示 */
             lNum++;
             if(ESP8266_EventGroup_Handle != NULL){
                 xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_CONNECT_BIT);
             }
-            vTaskDelay(2000);
+            vTaskDelay(1000);
         }else{
             /* 发送数据给app */
-            if(lBitState == ESP8266_LOOK_BIT){
-                u3_printf("LookSuccess");
-                xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_LOOK_BIT);
+            if((lBitState&ESP8266_LOOK_BIT) != 0){
+//                u3_printf("LookSuccess");
+                //xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_LOOK_BIT);
                 /* 摄像头数据太长，需要延时后再发送 */
-                vTaskDelay(1000);
+//                vTaskDelay(500);
                 OV7725_camera_refresh();
+//				vTaskDelay(500);
+//				u3_printf("LookOver");
+//				vTaskDelay(500);
             }
             else{
                 pDht22Send = Get_Dht22Value();

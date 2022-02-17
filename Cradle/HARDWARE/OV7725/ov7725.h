@@ -31,7 +31,8 @@
 #define OV7725_WREN		PAout(12)		//写入FIFO使能
 #define OV7725_VSYNC  	PAin(15)		//同步信号检测IO
 															  					 
-#define OV7725_DATA   GPIOB->IDR&0x00FF //数据输入端口
+#define OV7725_DATA   GPIOB->IDR&0x01FB //数据输入端口
+
 /////////////////////////////////////////									
 	    				 
 u8   OV7725_Init(void);		  	   		 

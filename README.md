@@ -2,6 +2,9 @@
 
 ## This is Faceless's Graduation-Project.
 
+**Cradle_V0.07:**
+	1、优化事件标志位的判断逻辑
+	2、下一版本取消ov7725
 **Cradle_V0.06:**  
 	1、添加代码注释  
 	2、重命名文件名，删除原有的readme.txt文件  

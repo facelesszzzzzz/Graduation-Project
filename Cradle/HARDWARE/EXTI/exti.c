@@ -3,6 +3,9 @@
 #include "key.h"
 #include "delay.h"
 #include "usart.h"
+#include "FreeRTOS.h"
+#include "event_groups.h"
+#include "ESP8266.h"
 #include "ov7725.h"
 
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -101,15 +104,22 @@ void EXTIX_Init(void)
 //}
 
 
-
+extern EventGroupHandle_t ESP8266_EventGroup_Handle;
+u8 ov_sta;
 /////////////////////////////////////////////////////////////////////////////////////
 //中断服务函数
-u8 ov_sta;
 void EXTI15_10_IRQHandler(void)
 {			
- 
+	EventBits_t lBitState = 0;
+	BaseType_t xHigherPriorityTaskWoken;
 	if(EXTI_GetITStatus(EXTI_Line15)==SET)
 	{     
+//		if(ESP8266_EventGroup_Handle != NULL)
+//			lBitState = xEventGroupGetBitsFromISR(ESP8266_EventGroup_Handle);
+//		if((lBitState&ESP8266_LOOK_RESET_BIT) != 0){
+//			xEventGroupClearBitsFromISR(ESP8266_EventGroup_Handle, ESP8266_LOOK_RESET_BIT);
+//			ov_sta = 0;
+//		}
 		if(ov_sta<2)
 		{
 			if(ov_sta==0)
@@ -120,6 +130,18 @@ void EXTI15_10_IRQHandler(void)
 			}else OV7725_WREN=0;	//禁止写入FIFO 	 
 			ov_sta++;
 		}
+		
+//		if(ov_sta == 2)
+//		{
+//			if(ESP8266_EventGroup_Handle != NULL){
+//				ov_sta++;
+//				xEventGroupSetBitsFromISR(ESP8266_EventGroup_Handle, ESP8266_LOOK_SET_BIT, &xHigherPriorityTaskWoken);
+//				if(pdTRUE == xHigherPriorityTaskWoken)
+//				{
+//					portYIELD_FROM_ISR(xHigherPriorityTaskWoken);//如果需要的话进行一次任务切换
+//				}
+//			}
+//		}
 	}
 	EXTI_ClearITPendingBit(EXTI_Line15);    //清除LINE15上的中断标志位  
 }
@@ -152,9 +174,9 @@ void EXTI15_Init(void)
   	EXTI_Init(&EXTI_InitStructure);	 	//根据EXTI_InitStruct中指定的参数初始化外设EXTI寄存器
 	
     NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;			//使能按键所在的外部中断通道
-  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x02;	//抢占优先级2， 
-  	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;					//子优先级1
-  	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;								//使能外部中断通道
+  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x06;	//抢占优先级2， 
+  	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;			//子优先级1
+  	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;					//使能外部中断通道
   	NVIC_Init(&NVIC_InitStructure); 
     
 }
