@@ -59,9 +59,9 @@ void VOICE_Mode(void)
 /**********************************************************************
 * 函数名称：VOICE_Select
 * 功能描述：播放特定曲目
-* 输入参数：VOICE_Song_e 枚举
+* 输入参数：曲目
 * 返回值：无
-* 补充说明：
+* 补充说明：无
 **********************************************************************/
 void VOICE_Select(uint8_t mSongNum)
 {
@@ -101,7 +101,7 @@ void VOICE_Init(void)
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;						                //配置为推挽输出模式 		 
  	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 				                //配置输出速率50MHz
  	GPIO_Init(GPIOC, &GPIO_InitStructure);							                        //使能GIPO口
-//	VOICE_Mode();															                //配置语音模块工作模式
+ 	
 	VOICE_Select(Voice_none);
 //	GPIO_ResetBits(GPIOA, GPIO_Pin_3);
 //	GPIO_SetBits(GPIOA, GPIO_Pin_2);

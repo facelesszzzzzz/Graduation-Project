@@ -2,18 +2,17 @@
 #define _VOICE_H_
 #include "sys.h"
 
-typedef enum
-{
-    Voice_none = 0,
-    Voice_one = 1,
-    Voice_two = 2,
-    Voice_three = 4,
-    Voice_four = 8,
-    Voice_five = 16,
-    Voice_six = 32,
-    Voice_seven = 64,
-    Voice_eight = 128
-}VOICE_Song_e;
+#define SetBit(x)                   (uint32_t)(1<<x)
+
+#define Voice_none                  0
+#define Voice_one                   SetBit(0)
+#define Voice_two                   SetBit(1)
+#define Voice_three                 SetBit(2)
+#define Voice_four                  SetBit(3)
+#define Voice_five                  SetBit(4)
+#define Voice_six                   SetBit(5)
+#define Voice_seven                 SetBit(6)
+#define Voice_eight                 SetBit(7)
 
 #define VOICE_ENABLE                1
 #define VOICE_DISABLE               0

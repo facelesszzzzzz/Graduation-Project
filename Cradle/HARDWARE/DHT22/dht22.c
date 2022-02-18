@@ -169,7 +169,13 @@ void RH_Tem_U32toString(u32 RH,u32 Tem)
 	}
 }
 
-
+/**********************************************************************
+* 函数名称：Get_Dht22Value
+* 功能描述：外部调用获取温湿度数据接口
+* 输入参数：无
+* 返回值：DHT22_t *
+* 补充说明：无
+**********************************************************************/
 DHT22_t *Get_Dht22Value(void)
 {
     return pDHT22;
@@ -194,16 +200,12 @@ u8 DHT22_Read_Data()
 		{
 			buf[i]=DHT22_Read_Byte();
 		}
-//		memcpy(pDHT22,buf,sizeof(stDHT22));
 		//校验和累加时存在相当概率会超出8位(即值大于1个char,故做强制类型转换，只考虑低8位)
 		if((unsigned char)(buf[0] + buf[1] + buf[2] + buf[3]) == buf[4])  
 		{
-			pDHT22->RH_Value = DHT22_RH2Ten(buf[0],buf[1]);		                    //湿度数据转换整型数字量
-			pDHT22->Tem_Value = DHT22_Tem2Ten(buf[2],buf[3]);	                    //温度数据转换整型数字量
-//			DHT22_LIMIT(gState);
-			RH_Tem_U32toString(pDHT22->RH_Value,pDHT22->Tem_Value);							//将温湿度整型数据转换成字符串数据	
-//			OLED_ShowString(20, 4, pDHT22->RH_Str, 16);
-//			OLED_ShowString(84, 4, pDHT22->Tem_Str, 16);
+			pDHT22->RH_Value = DHT22_RH2Ten(buf[0],buf[1]);		            //湿度数据转换整型数字量
+			pDHT22->Tem_Value = DHT22_Tem2Ten(buf[2],buf[3]);	            //温度数据转换整型数字量
+			RH_Tem_U32toString(pDHT22->RH_Value,pDHT22->Tem_Value);			//将温湿度整型数据转换成字符串数据	
 			return 0;
 		}
 	}
@@ -212,7 +214,7 @@ u8 DHT22_Read_Data()
 /**********************************************************************
 * 函数名称：DHT22_LIMIT
 * 功能描述：对DHT22温湿度进行比较，若超限则报警
-* 输入参数：
+* 输入参数：无
 * 返回值：无
 * 补充说明：无
 **********************************************************************/

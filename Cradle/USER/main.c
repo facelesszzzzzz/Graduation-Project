@@ -1,7 +1,7 @@
 #include "delay.h"
 #include "sys.h"
 #include "usart.h"
-#include "exti.h"
+#include "timer.h"
 
 #include <string.h>
 
@@ -11,32 +11,31 @@
 #include "event_groups.h"
 #include "semphr.h"
 #include "malloc.h"
-#include "Datatype.h"
 
+#include "Datatype.h"
 #include "key.h"
 #include "ESP8266.h"
 #include "oled.h"
 #include "dht22.h"
 #include "voice.h"
 #include "beep.h"
-#include "ov7725.h"
 
-#define DEFAULT_MODE        0
-#define CARE_MODE           1
+#define DEFAULT_MODE                        0
+#define CARE_MODE                           1
 
 #define TASK_INIT_STACK_LENGTH				50
 #define MAIN_RUNNING_STACK_LENGTH			128
 TaskHandle_t Task_Init_Handle;
 TaskHandle_t MainRunning_Handle;
 
-TimerHandle_t Timer_Count_Handle;
 extern EventGroupHandle_t ESP8266_EventGroup_Handle;
-
-void Timer_Count_Task(TimerHandle_t pxTimer)
-{
-
-}
-
+/**********************************************************************
+* 函数名称：MainRunning_Task
+* 功能描述：主要程序运行任务
+* 输入参数：void *pvParameters
+* 返回值：无
+* 补充说明：整个程序最重要的部分，类似裸机的while(1)
+**********************************************************************/
 void MainRunning_Task(void *pvParameters)
 {
     uint8_t lCurrentMode = DEFAULT_MODE;
@@ -127,78 +126,68 @@ void MainRunning_Task(void *pvParameters)
         BEEP_Handle();
         pDht22_Show = Get_Dht22Value();
         /* OLED内容显示 */
-        OLED_ShowString(40, 0, "Cradle", 16);
-        OLED_ShowString(0, 2, "Tem:", 16);
-        OLED_ShowString(32, 2, pDht22_Show->Tem_Str, 16);
-        OLED_ShowString(0, 4, "RH:", 16);
-        OLED_ShowString(24, 4, pDht22_Show->RH_Str, 16);
-        OLED_ShowString(0, 6, pModeStr[lCurrentMode], 16);
+        OLED_ShowString(40  , 0 , "Cradle"              , 16);
+        OLED_ShowString(0   , 2 , "Tem:"                , 16);
+        OLED_ShowString(32  , 2 , pDht22_Show->Tem_Str  , 16);
+        OLED_ShowString(0   , 4 , "RH:"                 , 16);
+        OLED_ShowString(24  , 4 , pDht22_Show->RH_Str   , 16);
+        OLED_ShowString(0   , 6 , pModeStr[lCurrentMode], 16);
         vTaskDelay(10);
     }
 }
-
+/**********************************************************************
+* 函数名称：Task_Init
+* 功能描述：初始化任务
+* 输入参数：void *pvParameters
+* 返回值：无
+* 补充说明：主要用于创建新的任务
+**********************************************************************/
 void Task_Init(void *pvParameters)
 {
-	taskENTER_CRITICAL();
-    ESP8266_Task_Init();
-//   	ESP8266_Queue_Handle = xQueueCreate(1, ESP8266_QUEUE_LEN);
-//   	Message_Queue_Handle = xQueueCreate(1, ESP8266_QUEUE_LEN);
-//   	ESP8266_EventGroup_Handle = xEventGroupCreate();
-//   	Timer_Count_Handle = xTimerCreate("TimerCount_Task",
-//   										1000,
-//   										pdTRUE,
-//   										0,
-//   										(TimerCallbackFunction_t)Timer_Count_Task);
-//   	xTimerStart(Timer_Count_Handle, 0);
-    xTaskCreate((TaskFunction_t) MainRunning_Task,
+	taskENTER_CRITICAL();                               //进入任务临界区，临界区内的任务不会被中断
+    ESP8266_Task_Init();                                //ESP8266 wifi任务初始化
+    xTaskCreate((TaskFunction_t) MainRunning_Task,      //主要程序运行任务创建
 				(const char * ) "MainRunning_Task",
 				MAIN_RUNNING_STACK_LENGTH,
 				(void *) NULL,
 				(UBaseType_t) MAIN_RUNNING_PRIORITY,
 				(TaskHandle_t *) &MainRunning_Handle);
 	vTaskDelete(Task_Init_Handle);
-	taskEXIT_CRITICAL();
+	taskEXIT_CRITICAL();                                //退出任务临界区，临界区内的任务可被中断，进行任务切换
 }
-
-int main (void)
+/**********************************************************************
+* 函数名称：main
+* 功能描述：主函数，程序入口处
+* 输入参数：无
+* 返回值：int
+* 补充说明：无
+**********************************************************************/
+int main(void)
 {		 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); //设置NVIC中断分组4位抢占优先级
 	delay_init();                                   //延时函数初始化
 	OLED_Init();                                    //Oled初始化
 	uart_init(115200);	                            //串口初始化为115200
     usart3_init(115200);                            //串口3初始化为115200
+    TIM5_PWM_Init(200-1,7200-1);                    //50hz舵机使用PWM初始化
+    OLED_ShowString(0, 0, "Bsp_Initialize", 16); 
 	KEY_Init();                                     //初始化与按键连接的硬件接口
 	BEEP_Init();                                    //蜂鸣器初始化
-    OLED_ShowString(0, 0, "Bsp_initialize", 16);
+    OLED_ShowString(0, 2, "Beep_initialize", 16);
 	Sound_Init();                                   //声音传感器初始化
-    OLED_ShowString(0, 2, "Voice_initialize", 16);
+    OLED_ShowString(0, 4, "Voice_initialize", 16);
     VOICE_Init();                                   //音乐播放器初始化
-    OLED_ShowString(0, 4, "DHT22_Initialize", 16);
-    while(DHT22_Init());                            //温湿度传感器初始化
-    OLED_ShowString(0, 6, "OV7725_Initialize", 16);
-    while(1)                                        //初始化OV7725_OV7670
-	{
-		if(OV7725_Init()==0)
-		{
-            OV7725_Configuration();	                //OV7725初始化摄像头参数配置		
-			delay_ms(1500);
-			break;
-		}
-		else
-		{
-			delay_ms(200);
-		}
-	} 	  							  
-	EXTI15_Init();				                    //中断触发ov7725摄像头开启			
-    delay_ms(2000); 
-    OLED_Clear();                                   //清屏
-	xTaskCreate((TaskFunction_t) Task_Init,
-				(const char * ) "Task_Init",
-				TASK_INIT_STACK_LENGTH,
-				(void *) NULL,
-				(UBaseType_t) TASK_INIT_PRIORITY,
-				(TaskHandle_t *) &Task_Init_Handle);
-	vTaskStartScheduler();
+    OLED_ShowString(0, 6, "DHT22_Initialize", 16);
+    while(DHT22_Init());                            //温湿度传感器初始化 							  		
+    delay_ms(1000); 
+    OLED_Clear();                                   //Oled清屏
+	xTaskCreate((TaskFunction_t) Task_Init,         //FreeRTOS任务创建
+				(const char * ) "Task_Init",        //FreeRTOS任务别名
+				TASK_INIT_STACK_LENGTH,             //FreeRTOS任务堆栈
+				(void *) NULL,                      //FreeRTOS任务传入参数
+				(UBaseType_t) TASK_INIT_PRIORITY,   //FreeRTOS任务优先级
+				(TaskHandle_t *) &Task_Init_Handle);//FreeRTOS任务句柄
+	vTaskStartScheduler();                          //开启任务调度
  	while(1); 
  }
 

@@ -2,6 +2,9 @@
 
 ## This is Faceless's Graduation-Project.
 
+**Cradle_V0.08:**
+	1、增加注释，取消ov7725
+	2、增加定时器5 PWM输出
 **Cradle_V0.07:**
 	1、优化事件标志位的判断逻辑
 	2、下一版本取消ov7725
