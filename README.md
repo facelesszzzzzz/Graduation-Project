@@ -2,6 +2,9 @@
 
 ## This is Faceless's Graduation-Project.
 
+**Cradle_V0.09:**
+	1、增加app按键控制，硬件按键优先级最高
+	2、优化音乐播放逻辑，舵机功能待定
 **Cradle_V0.08:**
 	1、增加注释，取消ov7725
 	2、增加定时器5 PWM输出

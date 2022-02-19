@@ -105,7 +105,34 @@ void ESP8266_Task(void *pvParameters)
 				}
                 /* 已经连接上TCP服务器，进行数据的接收处理 */
 				else{
-
+                    if(strstr(lBuf, "first")){
+                    	if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_FIRST_BIT);
+	                }else if(strstr(lBuf, "second")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_SECOND_BIT);
+	                }else if(strstr(lBuf, "third")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_THIRD_BIT);
+	                }else if(strstr(lBuf, "fourth")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_FOURTH_BIT);
+	                }else if(strstr(lBuf, "fifth")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_FIFTH_BIT);
+	                }else if(strstr(lBuf, "sixth")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_SILENCE_BIT);
+	                }else if(strstr(lBuf, "mode")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_SILENCE_BIT);
+	                }else if(strstr(lBuf, "beep")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_BEEP_BIT);
+	                }else if(strstr(lBuf, "music")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_MUSIC_BIT);
+	                }     
 				}
             }
         }
