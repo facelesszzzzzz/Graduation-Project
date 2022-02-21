@@ -29,6 +29,11 @@ TaskHandle_t Task_Init_Handle;
 TaskHandle_t MainRunning_Handle;
 
 extern EventGroupHandle_t ESP8266_EventGroup_Handle;
+
+#define Voice_Play(x)           VOICE_Select(x);\
+				                vTaskDelay(1000);\
+//				                VOICE_Select(Voice_none);      
+
 /**********************************************************************
 * 函数名称：MainRunning_Task
 * 功能描述：主要程序运行任务
@@ -43,6 +48,17 @@ void MainRunning_Task(void *pvParameters)
     uint8_t lSoundCount = 0;
     uint8_t lSoundState = VOICE_DISABLE;
 	uint8_t lSoundSelect = 0;
+    uint8_t lRecKey = 0;
+    uint8_t lKeyAnswer, lKeyValue;
+    uint8_t lVoicePlay[] = {
+                            ESP8266_SILENCE_BIT,            //静音
+                            ESP8266_FIRST_BIT,              //小兔子乖乖
+                            ESP8266_SECOND_BIT,             //世上只有妈妈好
+                            ESP8266_THIRD_BIT,              //数鸭子
+                            ESP8266_FOURTH_BIT,             //小星星
+                            ESP8266_FIFTH_BIT               //虫儿飞
+                            };
+    EventBits_t lBitState;
     DHT22_t *pDht22_Show = (DHT22_t *)pvPortMalloc(sizeof(DHT22_t)); 
     /* 等待连上服务器 */
     xEventGroupWaitBits((EventGroupHandle_t) ESP8266_EventGroup_Handle,
@@ -54,12 +70,49 @@ void MainRunning_Task(void *pvParameters)
 	OLED_Clear();
     while(1)
     {
+        lBitState = xEventGroupGetBits(ESP8266_EventGroup_Handle);
+        /* 音乐播放处理 */
+        if((lBitState&ESP8266_FIRST_BIT) != 0){                         //小兔子乖乖
+            Voice_Play(Voice_one);
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_FIRST_BIT);
+        }else if((lBitState&ESP8266_SECOND_BIT) != 0){                  //世上只有妈妈好
+            Voice_Play(Voice_two);
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_SECOND_BIT);
+        }else if((lBitState&ESP8266_THIRD_BIT) != 0){                   //数鸭子
+            Voice_Play(Voice_three);
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_THIRD_BIT);
+        }else if((lBitState&ESP8266_FOURTH_BIT) != 0){                  //小星星
+            Voice_Play(Voice_four);
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_FOURTH_BIT);
+        }else if((lBitState&ESP8266_FIFTH_BIT) != 0){                   //虫儿飞
+            Voice_Play(Voice_five);
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_FIFTH_BIT);
+        }else if((lBitState&ESP8266_SILENCE_BIT) != 0){                 //静音
+            Voice_Play(Voice_six);
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_SILENCE_BIT);
+        }
+        
         /* 按键处理 */
-        switch(KEY_Scan(0))
+        if((lBitState&ESP8266_MODE_BIT) != 0){
+            lRecKey = 1;
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_MODE_BIT);
+        }else if((lBitState&ESP8266_BEEP_BIT) != 0){
+            lRecKey = 2;
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_BEEP_BIT);
+        }else if((lBitState&ESP8266_MUSIC_BIT) != 0){
+            lRecKey = 3;
+            xEventGroupClearBits(ESP8266_EventGroup_Handle, ESP8266_MUSIC_BIT);
+        }
+				lKeyValue = KEY_Scan(0);
+				
+        lKeyAnswer = lKeyValue ? lKeyValue : lRecKey;          //硬件按键响应优先级最高
+        switch(lKeyAnswer)
         {
             case KEY0_PRES:
                 /* 模式切换 */
                 lCurrentMode = lCurrentMode == DEFAULT_MODE ? CARE_MODE : DEFAULT_MODE;
+								 if(ESP8266_EventGroup_Handle != NULL)
+									 xEventGroupSetBits(ESP8266_EventGroup_Handle, lVoicePlay[0]);
                 break;
             case KEY1_PRES:
                 /* 警报开关 */
@@ -71,29 +124,18 @@ void MainRunning_Task(void *pvParameters)
                 break;
             case WKUP_PRES:
                 lCurrentMode = DEFAULT_MODE;
-				lSoundSelect++;
-				if(1 == lSoundSelect){
-					/* 无声 */
-					VOICE_Select(Voice_three);
-					vTaskDelay(1000);
-					VOICE_Select(Voice_none);
-				}else if(2 == lSoundSelect){
-					/* 小星星 */
-					VOICE_Select(Voice_one);
-					vTaskDelay(1000);
-					VOICE_Select(Voice_none);
-				}else if(3 == lSoundSelect){
-					/* 两只老虎 */
-					VOICE_Select(Voice_two);
-					vTaskDelay(1000);
-					VOICE_Select(Voice_none);
-					lSoundSelect= 0;
-				}
-
+                /* 按键顺序播放 */
+                if(lSoundSelect >= sizeof(lVoicePlay)){
+                   lSoundSelect = 0;
+                }
+								if(ESP8266_EventGroup_Handle != NULL)
+                     xEventGroupSetBits(ESP8266_EventGroup_Handle, lVoicePlay[lSoundSelect]);
+                lSoundSelect++;
                 break;
             default:
                 break;
         }
+        lRecKey = 0;
         /* 温湿度数据读取 */
         DHT22_Read_Data();  
         /* 模式处理 */
@@ -110,13 +152,12 @@ void MainRunning_Task(void *pvParameters)
                     /* 检测到哭啼声 */
                     if(lSoundCount > 3 && VOICE_DISABLE == lSoundState){
                         lSoundState = VOICE_ENABLE;
-                        VOICE_Select(Voice_one);
-						vTaskDelay(1000);
-						VOICE_Select(Voice_none);
+                        if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, lVoicePlay[4]);
                     }
                 }else{
                     lSoundState = VOICE_DISABLE;
-                    VOICE_Select(Voice_none);
+//                    VOICE_Select(Voice_none);
                     lSoundCount = 0;
                 }
                 break;

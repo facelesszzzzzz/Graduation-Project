@@ -27,7 +27,7 @@ const char *pESP8266_Cmd[ESP8266_CMD_LEN] =
 	"AT+CWMODE=1\r\n",                                          //设置客户端模式
 	"AT+CWJAP=\"Facelesszzz\",\"05720041018\"\r\n",             //连接手机热点
 	"AT+CIPMUX=0\r\n",                                          //设置单路连接模式
-	"AT+CIPSTART=\"TCP\",\"172.20.10.2\",8900\r\n",            //根据启动app后的底部弹窗设定，端口默认8900
+	"AT+CIPSTART=\"TCP\",\"172.20.10.11\",8900\r\n",            //根据启动app后的底部弹窗设定，端口默认8900
 	"AT+CIPMODE=1\r\n",                                         //设置透传模式
 	"AT+CIPSEND\r\n"                                            //启动数据收发
 };
@@ -105,7 +105,31 @@ void ESP8266_Task(void *pvParameters)
 				}
                 /* 已经连接上TCP服务器，进行数据的接收处理 */
 				else{
-
+                    if(strstr(lBuf, "first")){
+                    	if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_FIRST_BIT);
+	                }else if(strstr(lBuf, "second")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_SECOND_BIT);
+	                }else if(strstr(lBuf, "third")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_THIRD_BIT);
+	                }else if(strstr(lBuf, "fourth")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_FOURTH_BIT);
+	                }else if(strstr(lBuf, "fifth")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_FIFTH_BIT);
+	                }else if(strstr(lBuf, "silence")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_SILENCE_BIT);
+	                }else if(strstr(lBuf, "mode")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_MODE_BIT);
+	                }else if(strstr(lBuf, "beep")){
+	                    if(ESP8266_EventGroup_Handle != NULL)
+                            xEventGroupSetBits(ESP8266_EventGroup_Handle, ESP8266_BEEP_BIT);
+	                }    
 				}
             }
         }
