@@ -27,7 +27,7 @@ const char *pESP8266_Cmd[ESP8266_CMD_LEN] =
 	"AT+CWMODE=1\r\n",                                          //设置客户端模式
 	"AT+CWJAP=\"Facelesszzz\",\"05720041018\"\r\n",             //连接手机热点
 	"AT+CIPMUX=0\r\n",                                          //设置单路连接模式
-	"AT+CIPSTART=\"TCP\",\"172.20.10.11\",8900\r\n",            //根据启动app后的底部弹窗设定，端口默认8900
+	"AT+CIPSTART=\"TCP\",\"172.20.10.2\",8900\r\n",            //根据启动app后的底部弹窗设定，端口默认8900
 	"AT+CIPMODE=1\r\n",                                         //设置透传模式
 	"AT+CIPSEND\r\n"                                            //启动数据收发
 };
